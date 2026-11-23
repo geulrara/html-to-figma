@@ -40,6 +40,10 @@ html-to-figma/
 
 `npm run dev`(Windows PowerShell에서는 `npm.cmd run dev`)를 실행한 뒤 [플러그인 UI](http://127.0.0.1:5000/ui.html) 또는 [사용 가이드](http://127.0.0.1:5000/preview.html)를 엽니다. HTML이나 `css/`의 스타일시트를 저장하면 열어 둔 페이지가 자동으로 새로고침됩니다.
 
+## GitHub Pages
+
+`geulrara/html-to-figma`의 `main` 브랜치에 푸시하면 사용 가이드가 배포됩니다. Pages에는 세 HTML 파일과 연결된 스타일시트 세 개가 포함됩니다. [배포된 사용 가이드](https://geulrara.github.io/html-to-figma/)
+
 ## 배경 및 이미지 처리
 
 - `header`, `main`, `section`, `footer` 등은 Figma 중첩 Frame으로 생성됩니다. 반복 UI는 반복 그룹 Frame으로 생성됩니다.
