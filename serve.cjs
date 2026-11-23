@@ -5,6 +5,8 @@ const { randomUUID } = require('node:crypto');
 
 const pages = new Set(['ui.html', 'preview.html']);
 const styles = new Set(['common.css', 'ui.css', 'preview.css']);
+const logoPath = 'img/logo.svg';
+const contentTypes = { '.html': 'text/html', '.css': 'text/css', '.svg': 'image/svg+xml' };
 const clients = new Set();
 const session = randomUUID();
 let revision = 0;
@@ -55,7 +57,7 @@ const server = http.createServer(async (request, response) => {
   const file = pathname === '/' ? 'ui.html' : pathname.slice(1);
   const isPage = pages.has(file);
   const isStyle = file.startsWith('css/') && styles.has(file.slice(4));
-  if (!isPage && !isStyle) {
+  if (!isPage && !isStyle && file !== logoPath) {
     response.writeHead(404).end();
     return;
   }
@@ -76,7 +78,7 @@ const server = http.createServer(async (request, response) => {
   }
 
   response.writeHead(200, {
-    'Content-Type': (isPage ? 'text/html' : 'text/css') + '; charset=utf-8',
+    'Content-Type': contentTypes[path.extname(file)] + '; charset=utf-8',
     'Content-Length': Buffer.byteLength(content),
     'Cache-Control': 'no-store',
   });
@@ -94,6 +96,9 @@ server.listen(5000, '127.0.0.1', () => {
   });
   fs.watch(path.join(__dirname, 'css'), (_, file) => {
     if (!file || styles.has(file)) scheduleReload();
+  });
+  fs.watch(path.join(__dirname, 'img'), (_, file) => {
+    if (!file || file === 'logo.svg') scheduleReload();
   });
   console.log('http://127.0.0.1:5000/ui.html');
   console.log('http://127.0.0.1:5000/preview.html');

@@ -23,6 +23,7 @@ jobs:
         run: |
           install -D -m 0644 -t _site index.html preview.html ui.html
           install -D -m 0644 -t _site/css css/common.css css/preview.css css/ui.css
+          install -D -m 0644 -t _site/img img/logo.svg
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site

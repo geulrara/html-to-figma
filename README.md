@@ -42,7 +42,7 @@ html-to-figma/
 
 ## GitHub Pages
 
-`geulrara/html-to-figma`의 `main` 브랜치에 푸시하면 사용 가이드가 배포됩니다. Pages에는 세 HTML 파일과 연결된 스타일시트 세 개가 포함됩니다. [배포된 사용 가이드](https://geulrara.github.io/html-to-figma/)
+`geulrara/html-to-figma`의 `main` 브랜치에 푸시하면 사용 가이드가 배포됩니다. Pages에는 HTML 파일 3개, 스타일시트 3개, 브랜드 로고 `img/logo.svg`가 포함됩니다. [배포된 사용 가이드](https://geulrara.github.io/html-to-figma/)
 
 ## 배경 및 이미지 처리
 

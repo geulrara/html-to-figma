@@ -81,21 +81,8 @@ input[type="checkbox"] {
 }
 
 .brand__mark {
-  display: grid;
-  width: 18px;
-  height: 18px;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
+  flex: none;
 }
-
-.brand__mark i {
-  display: block;
-  border-radius: 4px;
-  background: var(--accent);
-}
-.brand__mark i:nth-child(2) { background: #a259ff; }
-.brand__mark i:nth-child(3) { background: #f24e1e; }
-.brand__mark i:nth-child(4) { background: #1abcfe; }
 
 .form-control, .control-button {
   min-width: 0;
