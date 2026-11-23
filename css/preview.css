@@ -1,0 +1,109 @@
+/* 기본 테마와 접근성 시작 */
+:root { color-scheme: light; color: var(--ink); background: var(--surface); }
+html { --topbar-height: 53px; --contents-height: 34px; scroll-behavior: smooth; scroll-padding-top: calc(var(--topbar-height) + 23px); }
+body { word-break: keep-all; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--action); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.skip { position: fixed; z-index: 5; top: 8px; left: 16px; padding: 8px 12px; background: white; transform: translateY(-150%); }
+.skip:focus { transform: none; }
+/* 기본 테마와 접근성 끝 */
+
+/* 상단 탐색 시작 */
+.topbar { position: sticky; top: 0; z-index: 2; background: #fff; border-bottom: 1px solid var(--line); }
+.topbar-inner { max-width: 1360px; margin: auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; @media (max-width: 460px) { padding: 0 16px; gap: 8px; flex-wrap: wrap; } }
+.brand { white-space: nowrap; @media (max-width: 460px) { font-size: var(--text-size); } }
+.top-nav { display: flex; gap: 20px; white-space: nowrap; @media (max-width: 460px) { gap: 12px; } }
+.top-nav a { display: grid; align-items: center; min-height: 52px; border-bottom: 2px solid transparent; color: var(--muted); }
+.top-nav a:hover { border-color: var(--accent); color: var(--ink); }
+/* 상단 탐색 끝 */
+
+/* 본문 배치와 텍스트 스타일 시작 */
+.layout { max-width: 1180px; margin: auto; padding: 24px; display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 32px; align-items: start; @media (max-width: 900px) { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 16px; } }
+.guide { min-width: 0; }
+.guide-intro h1 { margin: 0 0 12px; font-size: 28px; line-height: 1.3; letter-spacing: -.7px; @media (max-width: 460px) { font-size: clamp(22px, 7vw, 24px); } }
+.guide-intro .eyebrow { margin: 0 0 10px; font-size: var(--text-caption); font-weight: 750; letter-spacing: .06em; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0; }
+.tag { padding: 4px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--subtle); font-size: var(--text-caption); color: var(--muted); }
+h2 { margin: 0; font-size: 16px; line-height: 1.4; letter-spacing: -.3px; }
+h3 { margin: 0 0 5px; font-size: var(--text-size); }
+p { margin: 0; color: var(--muted); }
+li, dd { color: var(--muted); }
+strong { color: var(--ink); font-weight: 650; }
+/* 본문 배치와 텍스트 스타일 끝 */
+
+/* 선택 메뉴 시작 */
+.select-field { position: relative; flex: 1 1 112px; min-width: 0; }
+.select-field .form-control { display: block; padding-inline-end: 32px; appearance: none; -webkit-appearance: none; cursor: pointer; @media (forced-colors: active) { appearance: auto; -webkit-appearance: auto; padding-inline-end: 9px; } }
+.select-field::after { content: ""; position: absolute; top: 50%; right: 10px; width: 11px; height: 7px; transform: translateY(-50%); pointer-events: none; background-image: linear-gradient(45deg, transparent 39%, var(--muted) 40% 60%, transparent 61%), linear-gradient(-45deg, transparent 39%, var(--muted) 40% 60%, transparent 61%); background-repeat: no-repeat; background-position: left center, right center; background-size: 6px 6px; @media (forced-colors: active) { display: none; } }
+/* 선택 메뉴 끝 */
+
+/* 목차와 사용 안내 시작 */
+.contents { position: sticky; top: calc(var(--topbar-height) + 8px); z-index: 1; display: flex; flex-wrap: wrap; margin-top: 16px; }
+.contents .segment-item { flex: 1 1 auto; }
+.section { padding: 24px 0; scroll-margin-top: var(--contents-height); border-bottom: 1px solid var(--line); }
+.section h2 { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.step-number { display: grid; place-items: center; flex: 0 0 24px; height: 24px; border-radius: 5px; background: var(--soft); color: var(--action); font-size: var(--text-caption); font-weight: 700; letter-spacing: 0; }
+.section ol { margin: 0; padding-left: 21px; }
+.section ol li { padding-left: 5px; }
+.section li + li { margin-top: 10px; }
+.modes { display: grid; gap: 18px; }
+.source-practice { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); scroll-margin-top: var(--contents-height); }
+.source-example, .callout { margin-top: 18px; padding: 10px; border: 1px solid var(--line); border-radius: 7px; font-size: var(--text-small); }
+.source-example { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 10px; }
+.callout { background: var(--soft); }
+.callout strong { display: block; margin-bottom: 2px; }
+.settings { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; margin: 0 0 16px; @media (max-width: 460px) { grid-template-columns: minmax(0, 1fr); gap: 2px; & dd + dt { margin-top: 6px; } } }
+.settings dt { font-weight: 650; }
+.settings dd { margin: 0; }
+/* 목차와 사용 안내 끝 */
+
+/* 코드 예제와 단축키 안내 시작 */
+.examples { display: grid; gap: 10px; margin-top: 14px; }
+.example { min-width: 0; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.example-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.example-code { margin: 0; padding: 10px 12px; background: var(--soft); white-space: pre-wrap; overflow-wrap: anywhere; }
+code { font: var(--text-small)/1.55 "SFMono-Regular", Consolas, ui-monospace, monospace; overflow-wrap: anywhere; }
+p code, li code { padding: 2px 4px; border-radius: 4px; background: var(--soft); }
+.demo-link { margin-top: 12px; }
+.copy-status { margin-top: 8px; font-size: var(--text-small); }
+details + details { border-top: 1px solid var(--line); }
+summary { padding: 14px 0; font-weight: 650; cursor: pointer; }
+details p { margin: 0 0 10px; }
+.keyboard { width: 100%; margin: 16px 0 20px; border-collapse: collapse; }
+.keyboard caption { margin: 20px 0 4px; text-align: left; font-size: 12px; font-weight: 700; }
+.keyboard :is(th, td) { padding: 10px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.keyboard th { color: var(--muted); font-weight: 500; }
+.keyboard :is(th, td):first-child { width: 42%; padding-right: 12px; }
+.keyboard kbd { display: inline-block; padding: 1px 5px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; background: var(--surface); font: var(--text-small)/1.5 "SFMono-Regular", Consolas, ui-monospace, monospace; white-space: nowrap; }
+/* 코드 예제와 단축키 안내 끝 */
+
+/* 플러그인 미리보기 시작 */
+.preview { position: sticky; top: calc(var(--topbar-height) + 23px); min-width: 0; max-height: calc(100dvh - var(--topbar-height) - 35px); overflow-y: auto; scrollbar-width: thin; @media (max-width: 900px) { position: static; width: min(100%, 460px); max-height: none; overflow: visible; justify-self: center; } }
+.preview-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 10px; }
+.preview-heading h2 { font-size: var(--text-size); letter-spacing: 0; }
+.live { display: flex; align-items: center; gap: 6px; color: var(--action); font-size: var(--text-small); }
+.live::before { content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+.preview-shell { border: 1px solid #ddd; border-radius: 7px; overflow: hidden; background: #fff; }
+.window-bar { display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border-bottom: 1px solid var(--line); background: var(--subtle); }
+.window-bar i { width: 7px; height: 7px; border-radius: 50%; background: #ccc; }
+.window-bar span { margin-left: 6px; color: var(--muted); font-size: var(--text-caption); }
+.preview-shell iframe { display: block; width: 100%; height: 600px; height: clamp(340px, calc(100dvh - 265px), 730px); border: 0; background: #fff; @media (max-width: 900px) { height: 640px; } }
+.demo-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
+.demo-controls label { color: var(--muted); font-size: var(--text-small); }
+.preview-note { margin-top: 13px; font-size: var(--text-small); line-height: 1.7; }
+#demoStatus { display: block; min-height: 24px; margin-top: 5px; color: var(--action); font-size: var(--text-small); }
+/* 플러그인 미리보기 끝 */
+
+/* 고급 설정과 실행 로그 시작 */
+.advanced { margin-top: 12px; }
+.advanced-body { display: grid; gap: 10px; padding: 16px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); }
+.advanced-body > label { display: grid; gap: 4px; }
+.advanced-body .check { display: flex; align-items: center; gap: 6px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+#log { display: block; width: 100%; min-height: 155px; padding: 11px; resize: vertical; font: var(--text-small)/1.55 "SFMono-Regular", Consolas, ui-monospace, monospace; }
+/* 고급 설정과 실행 로그 끝 */
+
+/* 하단 영역 시작 */
+footer { margin: auto; padding: 10px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: var(--text-small); text-align: center; display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; @media (max-width: 780px) { flex-direction: column; } }
+/* 하단 영역 끝 */

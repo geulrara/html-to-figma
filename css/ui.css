@@ -1,0 +1,112 @@
+/* 기본 테마와 전체 레이아웃 시작 */
+:root{color:var(--figma-color-text,var(--ink));background:var(--figma-color-bg,var(--surface))}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+/* 기본 테마와 전체 레이아웃 끝 */
+
+/* 상단 헤더 시작 */
+.header{height:52px;flex:0 0 52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--figma-color-border,var(--line))}
+.header__version{font-size:10px;color:var(--figma-color-text-tertiary,#999)}
+.header__actions{display:flex;align-items:center;gap:8px}
+/* 상단 헤더 끝 */
+
+/* 도움말 버튼과 대화상자 시작 */
+.help-trigger { display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;padding:5px;border:1px solid var(--figma-color-border,#ddd);border-radius:5px;background:var(--figma-color-bg,#fff);color:var(--figma-color-text-secondary,var(--muted));cursor:pointer; }
+.help-trigger:hover { background: var(--figma-color-bg-secondary, #f5f5f5); color: var(--accent); }
+.help-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.help-trigger svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.help-dialog { line-height: 1.5; -webkit-font-smoothing: antialiased; width: min(420px, calc(100% - 24px)); max-height: min(640px, calc(100vh - 32px)); max-height: min(640px, calc(100dvh - 32px)); padding: 0; overflow: hidden; border: 1px solid var(--figma-color-border, #ddd); border-radius: 12px; background: var(--figma-color-bg, #fff); color: var(--figma-color-text, #1e1e1e); box-shadow: 0 20px 64px rgba(0, 0, 0, 0.22), 0 4px 12px rgba(0, 0, 0, 0.08); }
+.help-dialog[open] { display: flex; flex-direction: column; }
+.help-dialog::backdrop { background: rgba(15, 23, 42, 0.48); }
+.help-dialog__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; padding: 14px 16px; border-bottom: 1px solid var(--figma-color-border,var(--line)); background: var(--figma-color-bg, #fff); }
+.help-dialog__heading { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.help-dialog__icon { display: grid; place-items: center; flex: 0 0 28px; width: 28px; height: 28px; border-radius: 8px; background: var(--figma-color-bg-selected-secondary, #edf7ff); color: var(--accent); font-size: 15px; font-weight: 650; }
+.help-dialog__title { margin: 0; font-size: 14px; font-weight: 650; line-height: 1.4; }
+.help-dialog__body { min-height: 0; padding: 14px; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; background: var(--figma-color-bg-secondary, #f7f7f7); }
+.help-dialog__section { padding: 14px; border: 1px solid var(--figma-color-border,var(--line)); border-radius: 8px; background: var(--figma-color-bg, #fff); }
+.help-dialog__section + .help-dialog__section { margin-top: 10px; }
+.help-dialog__section:first-child { border-color: var(--figma-color-border-selected, #b8dcff); background: var(--figma-color-bg-selected-secondary, #edf7ff); }
+.help-dialog__section h3 { display: flex; align-items: center; gap: 7px; margin: 0 0 10px; color: var(--figma-color-text, #333); font-size: 12px; font-weight: 650; line-height: 1.4; }
+.help-dialog__section h3::before { content: ''; width: 3px; height: 12px; border-radius: 2px; background: var(--accent); }
+.help-dialog__list { display: grid; gap: 9px; margin: 0; padding-left: 16px; color: var(--figma-color-text-secondary,var(--muted)); font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
+.help-dialog__list li::marker { color: var(--figma-color-text-tertiary, #aaa); font-size: 9px; }
+.help-dialog__list strong { color: var(--figma-color-text, #333); font-weight: 600; }
+.help-dialog__section:first-child .help-dialog__list { list-style: none; padding-left: 0; }
+.help-dialog kbd { display: inline-block; margin: 1px 0; font-size: 10px; line-height: 1.5; }
+.help-dialog__close { display: grid; place-items: center; flex: 0 0 28px; width: 28px; height: 28px; padding: 0; border: 1px solid transparent; border-radius: 6px; background: var(--figma-color-bg, #fff); color: var(--figma-color-text-secondary,var(--muted)); cursor: pointer; font-size: 20px; line-height: 1; }
+.help-dialog__close:hover { background: var(--figma-color-bg-secondary, #f3f3f3); border-color: var(--figma-color-border, #ddd); }
+.help-dialog__close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.help-dialog :where(kbd) { padding: 1px 4px; border: 1px solid var(--figma-color-border, #e6e6e6); border-radius: 4px; background: var(--figma-color-bg-secondary, #f5f5f5); color: var(--figma-color-text-secondary,var(--muted)); font-family: inherit; font-size: inherit; }
+/* 도움말 버튼과 대화상자 끝 */
+
+/* 본문과 입력 영역 시작 */
+.help-dialog__body:focus-visible,.editor__input:focus-visible{outline:2px solid var(--figma-color-border-selected,var(--accent));outline-offset:-2px}
+.content { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-gutter: stable; display: flex; flex-direction: column; gap: 16px; padding: 16px; }
+.content>section{flex-shrink:0}
+.section-heading{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--figma-color-text-secondary,var(--muted))}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);margin:8px 0 7px}
+.tabs__item--active{font-weight:650}
+.editor{overflow:hidden;border:1px solid var(--figma-color-border,#ddd);border-radius:7px}
+.editor__toolbar{height:30px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;background:var(--figma-color-bg-secondary,#f7f7f7);border-bottom:1px solid var(--figma-color-border,var(--line))}
+.editor__meta{font-size:9px;color:var(--figma-color-text-tertiary,#999)}
+.upload{margin:8px 0 10px;padding:10px;border:1px dashed var(--figma-color-border,#d0d0d0);border-radius:7px;background:var(--figma-color-bg-secondary,#f7f7f7)}
+.upload__header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.upload__hint{display:block;margin-top:6px;font-size:10px;line-height:1.45;color:var(--figma-color-text-secondary,var(--muted))}
+.upload__files{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.upload__file{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:4px 6px;border-radius:4px;background:var(--figma-color-bg,#fff);color:var(--figma-color-text-secondary,var(--muted));font-size:10px}
+.upload__file--empty{opacity:.7}
+.editor__input{display:block;width:100%;height:155px;padding:11px;resize:vertical;border:0;outline:0;color:var(--figma-color-text,#333);background:var(--figma-color-bg,#fff);font:11px/1.55 "SFMono-Regular",Consolas,monospace;tab-size:2}
+/* 본문과 입력 영역 끝 */
+
+/* 가져오기 설정 시작 */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:9px 0 10px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field__input--computed{opacity:.85}
+.check-option{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--figma-color-text-secondary,var(--muted))}
+/* 가져오기 설정 끝 */
+
+/* URL 가져오기 시작 */
+.url-import{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.url-import__row{display:flex;align-items:center;gap:7px}
+.url-import__input{flex:1}
+.url-import__button{flex-shrink:0}
+.url-import__button:disabled{cursor:progress}
+.url-import__hint{font-size:10px;line-height:1.45;color:var(--figma-color-text-secondary,var(--muted))}
+/* URL 가져오기 끝 */
+
+/* 렌더링 확인과 결과 시작 */
+.render-check{border:1px solid var(--figma-color-border,#ddd);border-radius:8px;padding:10px;background:var(--figma-color-bg-secondary,#f5f5f5)}
+.render-check__title{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.render-check__hint{font-size:10px;color:var(--figma-color-text-secondary,var(--muted));line-height:1.5;margin:8px 0 0}
+.render-check__viewport{display:block;position:absolute;left:-12000px;top:0;width:340px;height:330px;visibility:hidden;pointer-events:none;overflow:hidden;margin-top:10px;border:1px solid var(--figma-color-border,#ddd);background:#e8ebef}
+.render-check__viewport--visible{position:relative;left:auto;top:auto;width:auto;height:auto;max-height:330px;visibility:visible;pointer-events:auto;overflow:auto}
+.render-check__stage{position:relative;width:100%;min-height:1px;overflow:hidden}
+.runtime-frame{position:absolute;left:0;top:0;transform-origin:top left;border:0;background:white;max-width:none}
+.render-check__badge{font-size:10px;color:var(--figma-color-text-secondary,var(--muted));margin-top:6px}
+.result__summary{display:flex;justify-content:space-between;color:var(--figma-color-text-secondary,var(--muted));font-size:10px}
+.result__summary strong{font-size:12px;color:var(--figma-color-text,#333)}
+.result__error{min-height:12px;margin:5px 0 0;color:var(--figma-color-text-danger,#d44);font-size:10px}
+/* 렌더링 확인과 결과 끝 */
+
+/* 가져오기 버튼과 하단 영역 시작 */
+.import-actions{display:flex;flex-shrink:0;gap:8px;margin-top:auto;padding-top:12px;border-top:1px solid var(--figma-color-border,var(--line))}
+.app-footer{flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px 16px;border-top:1px solid var(--figma-color-border,var(--line));background:var(--figma-color-bg,#fff);font-size:11px;line-height:1.5;color:var(--figma-color-text-secondary,var(--muted));text-align:center;overflow-wrap:anywhere}
+.import-actions .control-button--primary{flex:1}
+/* 가져오기 버튼과 하단 영역 끝 */
+
+/* 프레임 통계 시작 */
+.frame-stats{padding:10px;border-radius:7px;background:var(--figma-color-bg-secondary,#f6f6f6);border:1px solid var(--figma-color-border,var(--line))}
+.frame-stats__row{display:flex;justify-content:space-between;gap:12px;margin-top:9px;font-size:11px}
+.frame-stats__row strong{font-size:15px;color:var(--figma-color-text,#222)}
+.frame-stats__detail{font-size:10px;line-height:1.45;color:var(--figma-color-text-secondary,var(--muted));margin:7px 0 0}
+/* 프레임 통계 끝 */
+
+/* 모드 탭과 추가 입력 안내 시작 */
+.mode-tabs{display:grid;flex-shrink:0;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 16px;border-bottom:1px solid var(--figma-color-border,#ddd)}
+.mode-tabs__item{height:38px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--figma-color-text-secondary,var(--muted));font-weight:600}
+.mode-tabs__item--active{border-bottom-color:var(--accent);color:var(--figma-color-text,#222)}
+.mode-tabs__item:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.panel-hint,.panel-note{margin:8px 0;font-size:10px;line-height:1.5;color:var(--figma-color-text-secondary,var(--muted))}
+.editor__input::placeholder{color:var(--figma-color-text-tertiary,#999);opacity:1}
+.clipboard-upload{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:10px}
+.clipboard-upload__hint{font-size:10px;color:var(--figma-color-text-secondary,var(--muted));line-height:1.4}
+/* 모드 탭과 추가 입력 안내 끝 */

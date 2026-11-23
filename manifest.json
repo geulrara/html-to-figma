@@ -1,0 +1,17 @@
+{
+  "name": "HTML to Figma",
+  "id": "html-to-figma-editable-layers",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": [
+    "figma"
+  ],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "*"
+    ],
+    "reasoning": "Import public webpage URLs and their external CSS/image assets, as explicitly requested by the user. Direct requests only; no proxy. External resources remain subject to CORS and target-site restrictions."
+  }
+}

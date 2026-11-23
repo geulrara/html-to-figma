@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="HTML to Figma 사용 가이드. File, Edit, Link로 소스를 가져오고 실제 플러그인 UI에서 렌더링을 체험하세요.">
+  <title>HTML to Figma · 사용 가이드</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/preview.css">
+</head>
+<body>
+  <a class="skip" href="#guide">가이드 본문으로 이동</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#guide"><span class="brand__mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>HTML to Figma</a>
+      <nav class="top-nav" aria-label="주요 메뉴">
+        <a href="#guide">사용 가이드</a>
+        <a href="#preview">UI 체험 ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <article class="guide" id="guide" aria-labelledby="guide-title" tabindex="-1">
+      <header class="guide-intro">
+        <p class="eyebrow">PLUGIN GUIDE / FIGMA</p>
+        <h1 id="guide-title">웹 화면을 가져와<br>Figma에서 편집하세요.</h1>
+        <p>파일이나 코드, 공개 웹페이지 주소를 준비하세요. 미리보기에서 화면을 확인한 뒤 Figma에 편집 가능한 레이어로 삽입합니다.</p>
+        <div class="tags" role="group" aria-label="주요 기능">
+          <span class="tag">파일·코드·URL 가져오기</span>
+          <span class="tag">렌더링 미리보기</span>
+          <span class="tag">Figma 레이어 삽입</span>
+        </div>
+      </header>
+
+      <nav class="contents segment-list" aria-label="가이드 목차">
+        <a class="segment-item" href="#setup">01 시작하기</a>
+        <a class="segment-item" href="#source">02 소스 입력</a>
+        <a class="segment-item" href="#render">03 렌더링 확인</a>
+        <a class="segment-item" href="#import">04 Figma 삽입</a>
+        <a class="segment-item" href="#faq">05 사용 팁</a>
+      </nav>
+
+      <section class="section" id="setup">
+        <h2><span class="step-number" aria-hidden="true">01</span>먼저, 가져올 소스를 선택하세요</h2>
+        <ol>
+          <li>플러그인 상단에서 준비한 소스에 맞는 탭을 선택합니다. 파일은 <strong>File</strong>, 코드는 <strong>Edit</strong>, 공개 웹페이지 주소는 <strong>Link</strong>를 사용합니다.</li>
+          <li>선택한 탭에서 파일을 올리거나 코드를 붙여넣거나 URL을 불러옵니다.</li>
+          <li><strong>Width</strong>에서 미리보기 너비를 설정하고 <strong>렌더링 확인</strong>을 눌러 가져올 화면을 확인합니다.</li>
+        </ol>
+        <p class="callout"><strong>화면을 확인한 뒤 Figma에 삽입합니다.</strong> 삽입 버튼이 비활성 상태라면 렌더링 확인을 눌렀는지 살펴보세요. 미리보기에서 ‘렌더링 확인 완료 · Figma 삽입 가능’이 표시되면 삽입할 수 있습니다.</p>
+        <a class="control-button control-button--primary demo-link" href="#preview">예제로 렌더링 체험하기&nbsp;<span aria-hidden="true">→</span></a>
+      </section>
+
+      <section class="section" id="source">
+        <h2><span class="step-number" aria-hidden="true">02</span>준비한 소스에 맞는 탭을 선택하세요</h2>
+        <div class="modes">
+          <div>
+            <h3>File에서 파일 가져오기</h3>
+            <p><strong>파일 선택</strong>을 눌러 HTML, CSS, JS, JSON과 이미지를 선택합니다. HTML에 상대 경로로 지정된 이미지는 업로드한 파일명으로 연결됩니다. 대체 이미지가 필요하면 <strong>클립보드 이미지 가져오기</strong>를 누릅니다.</p>
+          </div>
+          <div>
+            <h3>Edit에서 코드 붙여넣기</h3>
+            <p><strong>HTML · CSS · JS · JSON</strong> 중 해당 탭에 코드를 붙여넣습니다. 렌더링할 때 JS가 실행됩니다. JS에서 JSON 데이터가 필요하면 <code>window.pageData</code> 또는 <code>window.jsonData</code>를 사용합니다.</p>
+          </div>
+          <div>
+            <h3>Link에서 공개 웹페이지 가져오기</h3>
+            <p><strong>WEBPAGE URL</strong>에 주소를 입력하고 <strong>URL 불러오기</strong>를 누릅니다. HTML과 JSON을 제공하는 서버가 CORS 접근을 허용해야 합니다. 로그인 페이지나 복잡한 SPA는 재현이 제한될 수 있습니다.</p>
+          </div>
+        </div>
+        <p class="source-example"><strong>파일 입력 예시</strong> <code>index.html</code> <span>+</span> <code>style.css</code> <span>→</span> <strong>File</strong></p>
+        <section class="source-practice" id="practice" aria-labelledby="practice-title">
+          <h3 id="practice-title">HTML·CSS 예제로 연습하기</h3>
+          <ol>
+            <li><strong>HTML 복사</strong>를 누르고 UI 체험의 <strong>Edit → HTML</strong>에 붙여넣습니다.</li>
+            <li><strong>CSS 복사</strong>를 누르고 <strong>Edit → CSS</strong>에 붙여넣습니다.</li>
+            <li><strong>렌더링 확인</strong>을 눌러 파란 제목과 연한 파란색 배경이 있는 카드가 표시되는지 확인합니다.</li>
+          </ol>
+          <div class="examples">
+            <div class="example">
+              <div class="example-header"><strong>HTML</strong><button class="control-button" type="button" data-copy="sample-html" data-tab="HTML">HTML 복사</button></div>
+              <pre class="example-code"><code id="sample-html">&lt;main class="sample-card"&gt;
+  &lt;h1&gt;Hello Figma&lt;/h1&gt;
+  &lt;p&gt;첫 번째 디자인을 가져와 보세요.&lt;/p&gt;
+&lt;/main&gt;</code></pre>
+            </div>
+            <div class="example">
+              <div class="example-header"><strong>CSS</strong><button class="control-button" type="button" data-copy="sample-css" data-tab="CSS">CSS 복사</button></div>
+              <pre class="example-code"><code id="sample-css">.sample-card {
+  max-width: 420px;
+  margin: 32px auto;
+  padding: 24px;
+  border-radius: 12px;
+  background: #eef6ff;
+}
+.sample-card h1 { color: #0876c9; }</code></pre>
+            </div>
+          </div>
+          <p class="copy-status" id="copy-status" role="status"></p>
+          <a class="control-button control-button--primary demo-link" href="#preview">UI 체험에서 예제 적용하기&nbsp;<span aria-hidden="true">→</span></a>
+        </section>
+      </section>
+
+      <section class="section" id="render">
+        <h2><span class="step-number" aria-hidden="true">03</span>화면 크기를 설정하고 미리 보세요</h2>
+        <dl class="settings">
+          <dt>Width</dt><dd>미리보기 너비를 100–3000px 범위에서 설정합니다. 기본값은 1440px입니다.</dd>
+          <dt>Height</dt><dd>렌더링한 HTML의 전체 높이가 자동으로 표시됩니다.</dd>
+          <dt>배경 포함</dt><dd>배경과 도형, 이미지도 가져오려면 <strong>배경 · 도형 · 이미지 레이어 포함</strong>을 선택합니다.</dd>
+        </dl>
+        <ol>
+          <li><strong>렌더링 확인</strong>을 눌러 미리보기를 엽니다.</li>
+          <li>미리보기에서 <strong>글꼴과 이미지</strong>, 스크립트로 불러온 데이터가 표시되는지 확인합니다.</li>
+          <li>미리보기 아래에서 <strong>생성 예정 프레임과 하위 레이어 수</strong>를 확인합니다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="import">
+        <h2><span class="step-number" aria-hidden="true">04</span>확인한 화면을 Figma에 삽입하세요</h2>
+        <ol>
+          <li>렌더링을 확인한 뒤 Figma Desktop에서 <strong>Figma에 삽입</strong>을 누릅니다.</li>
+          <li>화면이 6,000px보다 길면 <strong>다음 영역 Figma에 삽입</strong>을 눌러 나머지를 가져옵니다.</li>
+          <li>Figma 캔버스에서 생성된 <strong>프레임과 레이어</strong>를 확인합니다.</li>
+        </ol>
+        <p class="callout"><strong>가져온 화면은 레이어 단위로 편집합니다.</strong> 클릭이나 페이지 이동을 추가하려면 Figma에서 별도로 설정하세요.</p>
+      </section>
+
+      <section class="section" id="faq">
+        <h2><span class="step-number" aria-hidden="true">05</span>알아두면 편리한 사용 팁</h2>
+        <table class="keyboard">
+          <caption>키보드 사용</caption>
+          <thead>
+            <tr><th scope="col">키 / 위치</th><th scope="col">동작</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>WEBPAGE URL에서 <kbd>Enter</kbd></td><td>입력한 주소의 웹페이지 불러오기</td></tr>
+            <tr><td>탭에서 <kbd>←</kbd> <kbd>→</kbd></td><td>이전·다음 입력 모드 또는 소스 탭으로 이동</td></tr>
+            <tr><td>탭에서 <kbd>Home</kbd> <kbd>End</kbd></td><td>첫 번째·마지막 탭 선택</td></tr>
+            <tr><td><kbd>Tab</kbd> / <kbd>Shift</kbd> + <kbd>Tab</kbd></td><td>다음·이전 요소로 포커스 이동</td></tr>
+            <tr><td>버튼에서 <kbd>Enter</kbd> / <kbd>Space</kbd></td><td>포커스된 버튼 실행</td></tr>
+            <tr><td>도움말에서 <kbd>Esc</kbd></td><td>도움말을 닫고 도움말 버튼으로 이동</td></tr>
+          </tbody>
+        </table>
+
+        <h3>자주 묻는 질문</h3>
+        <details>
+          <summary>이 페이지에서 Figma 파일도 바뀌나요?</summary>
+          <p>브라우저의 UI 체험에서는 렌더링 결과와 삽입 요청 기록을 확인할 수 있습니다. 실제 레이어를 추가하려면 Figma Desktop에서 플러그인을 실행하고 <strong>Figma에 삽입</strong>을 누르세요.</p>
+        </details>
+        <details>
+          <summary>Figma에 삽입 버튼은 언제 활성화되나요?</summary>
+          <p><strong>렌더링 확인</strong>을 누르고 미리보기 로딩이 끝날 때까지 기다리세요. 로딩이 길어지면 미리보기 아래의 상태 메시지를 확인하세요.</p>
+        </details>
+        <details>
+          <summary>이미지가 표시되지 않으면 어떻게 하나요?</summary>
+          <p>먼저 이미지 주소와 접근 권한을 확인하세요. 이미지 파일이 있다면 <strong>File</strong> 탭에 추가하거나 <strong>클립보드 이미지 가져오기</strong>를 사용하세요. 파일 하나당 이미지는 8MB, 코드는 1MB까지 가져올 수 있습니다.</p>
+        </details>
+        <details>
+          <summary>원본과 글꼴이나 레이아웃이 왜 다른가요?</summary>
+          <p>원본 글꼴이 Figma에서 사용 가능한지 확인하세요. 여러 배경이나 복잡한 Flex/Grid 배치는 삽입한 레이어를 확인한 뒤 캔버스에서 조정하세요.</p>
+        </details>
+      </section>
+    </article>
+
+    <aside class="preview" id="preview" aria-labelledby="previewTitle" tabindex="-1">
+      <div class="preview-heading">
+        <h2 id="previewTitle">직접 사용해 보세요</h2>
+        <span class="live">실제 플러그인 UI</span>
+      </div>
+      <div class="preview-shell">
+        <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>HTML to Figma · Preview</span></div>
+        <iframe id="pluginUi" src="./ui.html" title="HTML to Figma 플러그인 체험" sandbox="allow-scripts allow-same-origin"></iframe>
+        <div class="demo-controls">
+          <label for="demoPreset">체험 상태</label>
+          <div class="select-field">
+            <select id="demoPreset" class="form-control">
+              <option value="empty">빈 화면</option>
+              <option value="html">HTML 예제</option>
+              <option value="styled">HTML + CSS 예제</option>
+              <option value="custom" disabled>사용자 지정</option>
+            </select>
+          </div>
+          <button id="restartDemo" class="control-button" type="button">다시 시작</button>
+        </div>
+      </div>
+      <p class="preview-note">체험 상태를 바꾸면 입력한 소스가 바뀝니다. Figma 삽입 요청은 기록에서 확인할 수 있으며, 실제 레이어 삽입은 Figma Desktop에서 실행합니다.</p>
+      <output id="demoStatus" role="status">플러그인 UI를 불러오고 있습니다.</output>
+      <details class="advanced">
+        <summary>체험 설정 및 요청 기록</summary>
+        <div class="advanced-body">
+          <label for="demoWidth">미리보기 너비 (px)
+            <input id="demoWidth" class="form-control" type="number" min="100" max="3000" step="1" value="1440" required>
+          </label>
+          <label class="check"><input id="demoBackground" type="checkbox" checked> 배경 · 도형 · 이미지 레이어 포함</label>
+          <div class="actions">
+            <button id="applySettings" class="control-button" type="button">설정 적용</button>
+            <button id="resetInputs" class="control-button" type="button">입력 초기화</button>
+          </div>
+          <label class="check"><input id="autoReset" type="checkbox"> 삽입 요청 후 입력 초기화</label>
+          <label for="log">최근 요청 기록 (최대 50개)
+            <textarea id="log" class="form-control" readonly spellcheck="false"></textarea>
+          </label>
+          <div class="actions"><button id="clearLog" class="control-button" type="button">기록 비우기</button></div>
+        </div>
+      </details>
+    </aside>
+  </main>
+
+  <footer><span>HTML to Figma · 사용 가이드</span><span>Copyright © 2026 소중한네시간. All rights reserved.</span></footer>
+  <script>
+    const topbar = document.querySelector('.topbar');
+    const contents = document.querySelector('.contents');
+    const guideLinks = contents.querySelectorAll('a');
+
+    function updateScrollOffsets() {
+      const root = document.documentElement.style;
+      root.setProperty('--topbar-height', topbar.getBoundingClientRect().height + 'px');
+      root.setProperty('--contents-height', contents.getBoundingClientRect().height + 'px');
+    }
+
+    updateScrollOffsets();
+    const navigationResize = new ResizeObserver(updateScrollOffsets);
+    navigationResize.observe(topbar);
+    navigationResize.observe(contents);
+
+    function updateNavigation() {
+      const hash = location.hash === '#practice' ? '#source' : location.hash || '#setup';
+      for (const link of guideLinks) {
+        if (link.hash === hash) {
+          link.setAttribute('aria-current', 'location');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      }
+    }
+
+    updateNavigation();
+    window.addEventListener('hashchange', updateNavigation);
+
+    const copyStatus = document.getElementById('copy-status');
+    for (const button of document.querySelectorAll('[data-copy]')) {
+      button.addEventListener('click', async () => {
+        const code = document.getElementById(button.dataset.copy).textContent;
+        const tab = button.dataset.tab;
+        try {
+          await navigator.clipboard.writeText(code);
+          copyStatus.textContent = '복사했습니다. UI 체험의 Edit → ' + tab + '에 붙여넣으세요.';
+        } catch {
+          copyStatus.textContent = '코드를 선택해 직접 복사한 뒤 Edit → ' + tab + '에 붙여넣으세요.';
+        }
+      });
+    }
+
+    const byId = id => document.getElementById(id);
+    const pluginUi = byId('pluginUi');
+    const demoPreset = byId('demoPreset');
+    const demoWidth = byId('demoWidth');
+    const demoBackground = byId('demoBackground');
+    const demoStatus = byId('demoStatus');
+    const autoReset = byId('autoReset');
+    const log = byId('log');
+    const logEntries = [];
+    const demoButtons = ['restartDemo', 'applySettings', 'resetInputs'].map(byId);
+    let uiDocument;
+
+    function recordRequest(label) {
+      const time = new Date().toLocaleTimeString('ko-KR');
+      logEntries.unshift('[' + time + '] ' + label);
+      if (logEntries.length > 50) logEntries.pop();
+      log.value = logEntries.join('\n');
+    }
+
+    function syncSettings() {
+      demoWidth.value = uiDocument.getElementById('viewportWidth').value;
+      demoBackground.checked = uiDocument.getElementById('includeBg').checked;
+    }
+
+    function setDemoControlsEnabled(enabled) {
+      demoPreset.disabled = !enabled;
+      for (const button of demoButtons) button.disabled = !enabled;
+    }
+
+    function clearDemoInputs() {
+      uiDocument.getElementById('resetBtn').click();
+      uiDocument.getElementById('mode-file').click();
+      demoPreset.value = 'empty';
+    }
+
+    function loadDemoPreset() {
+      const preset = demoPreset.value;
+      clearDemoInputs();
+      if (preset === 'empty') {
+        demoStatus.textContent = '입력을 비웠습니다. File, Edit, Link에서 소스를 넣어 보세요.';
+        recordRequest('빈 화면 적용');
+        return;
+      }
+
+      uiDocument.getElementById('mode-edit').click();
+      const editor = uiDocument.getElementById('editor');
+      const sources = preset === 'styled' ? ['css', 'html'] : ['html'];
+      for (const type of sources) {
+        uiDocument.getElementById('source-' + type).click();
+        editor.value = byId('sample-' + type).textContent;
+        editor.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      demoPreset.value = preset;
+      recordRequest(preset === 'styled' ? 'HTML + CSS 예제 적용' : 'HTML 예제 적용');
+      demoStatus.textContent = 'Edit에 예제를 넣었습니다. 렌더링 확인을 눌러 보세요.';
+    }
+
+    function connectDemo() {
+      const nextDocument = pluginUi.contentDocument;
+      if (!nextDocument?.getElementById('resetBtn') || nextDocument === uiDocument) return;
+      uiDocument = nextDocument;
+      syncSettings();
+      setDemoControlsEnabled(true);
+      demoStatus.textContent = '예제를 선택하거나 플러그인 UI에서 직접 입력해 보세요.';
+
+      uiDocument.addEventListener('input', event => {
+        if (event.isTrusted && ['editor', 'urlInput'].includes(event.target.id)) demoPreset.value = 'custom';
+      });
+      uiDocument.addEventListener('change', event => {
+        if (!event.isTrusted) return;
+        if (['viewportWidth', 'includeBg'].includes(event.target.id)) syncSettings();
+        else if (event.target.type === 'file') demoPreset.value = 'custom';
+      });
+      uiDocument.getElementById('reviewBtn').addEventListener('click', event => {
+        const expanded = event.currentTarget.getAttribute('aria-expanded') === 'true';
+        recordRequest(expanded ? '렌더링 미리보기 열기' : '렌더링 미리보기 닫기');
+      });
+      uiDocument.getElementById('resetBtn').addEventListener('click', event => {
+        if (!event.isTrusted) return;
+        demoPreset.value = 'empty';
+        recordRequest('플러그인 입력 초기화');
+        demoStatus.textContent = '플러그인 입력을 초기화했습니다.';
+      });
+    }
+
+    setDemoControlsEnabled(false);
+    pluginUi.addEventListener('load', connectDemo);
+    if (pluginUi.contentDocument?.readyState === 'complete') connectDemo();
+
+    demoPreset.addEventListener('change', loadDemoPreset);
+    byId('restartDemo').addEventListener('click', () => {
+      setDemoControlsEnabled(false);
+      uiDocument = undefined;
+      demoPreset.value = 'empty';
+      autoReset.checked = false;
+      demoStatus.textContent = '체험을 다시 불러오고 있습니다.';
+      recordRequest('체험 다시 시작');
+      pluginUi.src = './ui.html';
+    });
+    byId('applySettings').addEventListener('click', () => {
+      if (!demoWidth.reportValidity()) return;
+      const widthInput = uiDocument.getElementById('viewportWidth');
+      const includeBackground = uiDocument.getElementById('includeBg');
+      if (widthInput.value !== demoWidth.value || includeBackground.checked !== demoBackground.checked) {
+        widthInput.value = demoWidth.value;
+        includeBackground.checked = demoBackground.checked;
+        widthInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      syncSettings();
+      recordRequest('미리보기 설정 적용 · ' + demoWidth.value + 'px · 배경 옵션 ' + (demoBackground.checked ? '켜짐' : '꺼짐'));
+      demoStatus.textContent = '설정을 적용했습니다. 렌더링 결과를 확인해 보세요.';
+    });
+    byId('resetInputs').addEventListener('click', () => {
+      clearDemoInputs();
+      recordRequest('플러그인 입력 초기화');
+      demoStatus.textContent = '플러그인 입력을 초기화했습니다.';
+    });
+    byId('clearLog').addEventListener('click', () => {
+      logEntries.length = 0;
+      log.value = '';
+      demoStatus.textContent = '요청 기록을 비웠습니다.';
+    });
+
+    window.addEventListener('message', event => {
+      if (!uiDocument || event.source !== pluginUi.contentWindow || event.origin !== location.origin) return;
+      const message = event.data?.pluginMessage;
+      if (message?.type !== 'IMPORT_DOM' || !message.payload) return;
+
+      const { frameCount, layerCount, chunkStart, chunkEnd } = message.payload;
+      recordRequest('Figma 삽입 요청 · ' + chunkStart + '–' + chunkEnd + 'px · 프레임 ' + frameCount + '개 / 레이어 ' + layerCount + '개');
+      const explanation = '브라우저 체험에서 삽입 요청을 기록했습니다. 실제 삽입은 Figma Desktop에서 할 수 있습니다.';
+      if (autoReset.checked) {
+        clearDemoInputs();
+        demoStatus.textContent = '삽입 요청을 기록하고 입력을 초기화했습니다.';
+      } else {
+        pluginUi.contentWindow.postMessage({ pluginMessage: { type: 'ERROR', message: explanation } }, location.origin);
+        demoStatus.textContent = explanation;
+      }
+    });
+  </script>
+</body>
+</html>

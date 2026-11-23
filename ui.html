@@ -1,0 +1,1624 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HTML to Figma</title>
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/ui.css">
+</head>
+<body>
+<div class="app">
+<header class="header">
+  <div class="brand"><span class="brand__mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>HTML to Figma</div>
+  <div class="header__actions">
+    <span class="header__version">BETA · 2.5.1</span>
+    <button id="helpTrigger" class="help-trigger" type="button" aria-label="사용 방법 및 키보드 접근성 안내 열기" aria-haspopup="dialog" aria-controls="helpDialog">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.3 2.3 0 1 1 3.8 1.7c-1 .9-1.6 1.2-1.6 2.8M12 17h.01"/></svg>
+    </button>
+  </div>
+</header>
+<div class="mode-tabs" role="tablist" aria-label="입력 모드">
+  <button id="mode-file" class="mode-tabs__item mode-tabs__item--active" type="button" role="tab" aria-selected="true" aria-controls="panel-file">File</button>
+  <button id="mode-edit" class="mode-tabs__item" type="button" role="tab" aria-selected="false" aria-controls="panel-edit" tabindex="-1">Edit</button>
+  <button id="mode-link" class="mode-tabs__item" type="button" role="tab" aria-selected="false" aria-controls="panel-link" tabindex="-1">Link</button>
+</div>
+<main class="content">
+<section id="panel-file" role="tabpanel" aria-labelledby="mode-file"><p class="panel-hint">HTML/CSS/JS/JSON 및 이미지 파일을 업로드하세요. 상대 경로의 이미지도 파일명으로 연결합니다.</p><div class="section-heading">SOURCE CODE</div>
+<div class="upload">
+  <div class="upload__header">
+    <span><strong>소스 파일 가져오기</strong></span>
+    <button class="control-button" id="uploadBtn" type="button">파일 선택</button>
+  </div>
+  <input id="fileInput" type="file" accept=".html,.htm,.css,.js,.mjs,.json,.png,.jpg,.jpeg,.gif,.webp,.svg,text/html,text/css,text/javascript,application/javascript,image/*" multiple hidden>
+  <span class="upload__hint">HTML · CSS · JS · JSON 파일을 한 번에 선택하거나 개별 업로드할 수 있습니다. 같은 형식의 파일은 마지막으로 선택한 파일 내용으로 바뀝니다.</span>
+  <div class="upload__files" id="fileList" aria-live="polite"><span class="upload__file upload__file--empty">선택한 파일 없음</span></div>
+</div>
+<div class="clipboard-upload">
+  <button id="clipboardImageBtn" type="button" class="control-button">클립보드 이미지 가져오기</button>
+  <span class="clipboard-upload__hint">우선 &lt;img src&gt; URL을 직접 가져옵니다. 실패 시 이곳에 직접 붙여넣은 이미지를 대체 이미지로 사용할 수 있습니다.</span>
+</div>
+<p class="panel-note">로컬 이미지: PNG, JPEG, GIF, WebP, SVG (8MB/개) · 코드: 1MB/개</p></section>
+<section id="panel-link" role="tabpanel" aria-labelledby="mode-link" hidden><div class="url-import">
+<label class="section-heading" for="urlInput">WEBPAGE URL</label>
+<div class="url-import__row"><input id="urlInput" class="form-control url-import__input" type="url" placeholder="https://example.com/" autocomplete="url" spellcheck="false"><button id="loadUrlBtn" class="control-button control-button--primary url-import__button" type="button">URL 불러오기</button></div>
+<span class="url-import__hint">공개 페이지의 HTML·CSS·JS를 가져와 실행하고, JSON API 데이터로 생성된 테이블과 페이지 번호까지 렌더링합니다. HTML·JSON은 CORS 접근 허용이 필요합니다. 가져온 JS는 격리된 iframe에서 실행됩니다.</span>
+</div><p class="panel-note">공개 URL에 한해 불러오기 가능 · CORS 및 로그인 제한 적용</p></section>
+<section id="panel-edit" role="tabpanel" aria-labelledby="mode-edit" hidden><div class="section-heading">코드 직접 입력</div><div class="tabs segment-list" role="tablist" aria-label="소스 파일">
+<button id="source-html" class="segment-item tabs__item--active" type="button" role="tab" aria-selected="true" aria-controls="sourcePanel" data-tab="html">HTML</button>
+<button id="source-css" class="segment-item" type="button" role="tab" aria-selected="false" aria-controls="sourcePanel" data-tab="css" tabindex="-1">CSS</button>
+<button id="source-js" class="segment-item" type="button" role="tab" aria-selected="false" aria-controls="sourcePanel" data-tab="js" tabindex="-1">JS</button>
+<button id="source-json" class="segment-item" type="button" role="tab" aria-selected="false" aria-controls="sourcePanel" data-tab="json" tabindex="-1">JSON</button></div>
+<p class="panel-note">JSON은 <code>window.pageData</code> / <code>window.jsonData</code>로 전달합니다. JS 코드가 입력되면 체크 없이 자동 실행해 최종 HTML을 렌더링합니다.</p>
+<div class="editor" id="sourcePanel" role="tabpanel" aria-labelledby="source-html"><div class="editor__toolbar"><span id="filename">index.html</span><span class="editor__meta">SOURCE EDITOR</span></div><textarea class="editor__input" id="editor" spellcheck="false" aria-label="HTML 코드 입력" placeholder="HTML 코드를 입력하세요."></textarea></div>
+</section>
+<section><div class="section-heading">IMPORT SETTINGS</div><div class="settings-grid">
+<label class="field"><span>Width</span><input class="form-control" id="viewportWidth" type="number" min="100" max="3000" value="1440"></label>
+<label class="field"><span>Height</span><input class="form-control field__input--computed" id="viewportHeight" type="number" value="100" min="1" readonly aria-label="자동 계산된 HTML 전체 높이"></label></div>
+<label class="check-option"><input id="includeBg" type="checkbox" checked> 배경 · 도형 · 이미지 레이어 포함</label></section>
+
+<section class="render-check">
+<div class="render-check__title"><span class="section-heading">HTML RENDER CHECK</span><button type="button" id="reviewBtn" class="control-button" aria-expanded="false" aria-controls="renderViewport">렌더링 확인</button></div>
+<p class="render-check__hint" id="reviewHint">CSS → JSON → JS(입력 시 자동 실행)를 반영합니다. 첫 삽입 전에 확인하면 나머지 영역은 다시 렌더링 후 연속 삽입할 수 있습니다.</p>
+<div class="render-check__viewport" id="renderViewport"><div class="render-check__stage" id="renderStage"><iframe class="runtime-frame" id="preview" title="실행된 HTML 디자인 확인" sandbox="allow-scripts"></iframe></div></div>
+<div class="render-check__badge" id="reviewStatus" role="status">검토 전 · 삽입 비활성</div>
+</section>
+<section class="frame-stats" aria-live="polite">
+<div class="section-heading">FIGMA FRAME STRUCTURE</div>
+<div class="frame-stats__row"><span>생성 예정 프레임 <strong id="frameCount">0</strong>개</span><span>하위 레이어 <strong id="countLayers">0</strong>개</span></div>
+<p class="frame-stats__detail" id="frameBreakdown">시맨틱 구조와 반복 UI 패턴을 분석합니다.</p>
+<p class="frame-stats__detail" id="chunkProgress" aria-live="polite">다음 삽입 영역: 0–6000px</p>
+<p class="frame-stats__detail" id="statusText">코드를 입력하세요.</p>
+<p class="result__error" id="errorText" role="status" aria-live="polite"></p></section>
+
+<div class="import-actions"><button class="control-button" id="resetBtn" type="button">초기화</button><button class="control-button control-button--primary" id="importBtn" type="button" disabled>Figma에 삽입</button></div>
+</main>
+
+
+<footer class="app-footer"><span>Copyright © 2026 소중한네시간. All rights reserved.</span></footer>
+</div>
+<dialog id="helpDialog" class="help-dialog" aria-labelledby="helpTitle">
+  <div class="help-dialog__header">
+    <div class="help-dialog__heading">
+      <span class="help-dialog__icon" aria-hidden="true">?</span>
+      <h2 id="helpTitle" class="help-dialog__title">기능 사용 안내</h2>
+    </div>
+    <button id="helpClose" class="help-dialog__close" type="button" aria-label="도움말 닫기" autofocus>×</button>
+  </div>
+  <div id="helpBody" class="help-dialog__body" role="region" aria-label="도움말 본문" tabindex="0">
+    <section class="help-dialog__section" aria-labelledby="helpGettingStarted">
+      <h3 id="helpGettingStarted">시작하기</h3>
+      <ul class="help-dialog__list" role="list">
+        <li>Figma 디자인 파일에서 <strong>HTML to Figma</strong> 플러그인을 실행합니다. 가져올 소스에 맞춰 <strong>File</strong>, <strong>Edit</strong>, <strong>Link</strong> 중 하나를 선택합니다.</li>
+      </ul>
+    </section>
+    <section class="help-dialog__section">
+      <h3>File · 파일 가져오기</h3>
+      <ul class="help-dialog__list">
+        <li><strong>파일 선택</strong>에서 HTML, CSS, JS, JSON과 이미지를 선택합니다.</li>
+        <li>대체 이미지는 <strong>클립보드 이미지 가져오기</strong>로 추가합니다.</li>
+      </ul>
+    </section>
+    <section class="help-dialog__section">
+      <h3>Edit · 코드 직접 입력</h3>
+      <ul class="help-dialog__list">
+        <li>HTML·CSS·JS·JSON 탭에 해당 코드를 입력합니다.</li>
+        <li>입력한 JS는 렌더링할 때 자동 실행됩니다.</li>
+      </ul>
+    </section>
+    <section class="help-dialog__section">
+      <h3>Link · 웹페이지 불러오기</h3>
+      <ul class="help-dialog__list">
+        <li><strong>WEBPAGE URL</strong>에 주소를 입력하고 <strong>URL 불러오기</strong>를 누릅니다.</li>
+        <li>CORS 접근을 허용하는 공개 페이지를 가져올 수 있습니다.</li>
+      </ul>
+    </section>
+    <section class="help-dialog__section">
+      <h3>공통 · 설정, 렌더링 및 삽입</h3>
+      <ul class="help-dialog__list">
+        <li><strong>Width</strong>로 너비를 설정합니다. <strong>Height</strong>는 자동 계산됩니다.</li>
+        <li>필요하면 <strong>배경 · 도형 · 이미지 레이어 포함</strong>을 선택합니다.</li>
+        <li><strong>렌더링 확인</strong>에서 화면과 레이어를 확인합니다. 준비되면 <strong>Figma에 삽입</strong>을 누릅니다.</li>
+        <li>높이가 6,000px을 넘으면 <strong>다음 영역 Figma에 삽입</strong>을 누릅니다.</li>
+      </ul>
+    </section>
+    <section class="help-dialog__section" aria-labelledby="helpKeyboard">
+      <h3 id="helpKeyboard">키보드 접근성</h3>
+      <ul class="help-dialog__list">
+        <li><kbd>Tab</kbd>·<kbd>Shift</kbd>+<kbd>Tab</kbd>으로 항목을 이동합니다. <kbd>Enter</kbd>·<kbd>Space</kbd>로 버튼을 실행합니다.</li>
+        <li><strong>입력 모드</strong>와 <strong>소스 파일</strong> 탭은 <kbd>←</kbd>·<kbd>→</kbd>로 전환합니다. <kbd>Home</kbd>·<kbd>End</kbd>로 첫 탭과 마지막 탭에 이동합니다.</li>
+        <li><strong>WEBPAGE URL</strong>에 주소를 입력하고 <kbd>Enter</kbd>를 누릅니다.</li>
+        <li>도움말 본문에 초점을 둔 뒤 <kbd>↑</kbd>·<kbd>↓</kbd>로 스크롤합니다. <kbd>Esc</kbd>로 닫으면 도움말 버튼으로 초점이 돌아갑니다.</li>
+      </ul>
+    </section>
+  </div>
+</dialog>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const helpTrigger = $('helpTrigger');
+  const helpDialog = $('helpDialog');
+  const helpClose = $('helpClose');
+  const helpBody = $('helpBody');
+  helpTrigger.addEventListener('click', () => {
+    helpDialog.showModal();
+    helpBody.scrollTop = 0;
+  });
+  helpClose.addEventListener('click', () => helpDialog.close());
+  helpDialog.addEventListener('close', () => helpTrigger.focus());
+  helpDialog.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      helpDialog.close();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    event.preventDefault();
+    (document.activeElement === helpClose ? helpBody : helpClose).focus();
+  });
+
+  function bindTabList(tabs, activate) {
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activate(tab));
+      tab.addEventListener('keydown', event => {
+        let nextIndex;
+        if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') nextIndex = (index + tabs.length - 1) % tabs.length;
+        else if (event.key === 'Home') nextIndex = 0;
+        else if (event.key === 'End') nextIndex = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        const nextTab = tabs[nextIndex];
+        activate(nextTab);
+        nextTab.focus();
+      });
+    });
+  }
+
+  function updateTab(tab, selected, activeClass) {
+    tab.classList.toggle(activeClass, selected);
+    tab.setAttribute('aria-selected', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+  }
+
+  const editor = $('editor');
+  const preview = $('preview');
+  const widthInput = $('viewportWidth');
+  const heightInput = $('viewportHeight');
+  const includeBg = $('includeBg');
+  const code = {
+    html: `<main class="card">\n  <h1>Hello Figma</h1>\n  <p>HTML을 편집 가능한 레이어로 가져옵니다.</p>\n</main>`,
+    css: `body { margin: 0; font-family: Inter, Arial, sans-serif; }\n.card { padding: 32px; background: #fff; border-radius: 16px; }\nh1 { color: #1e1e1e; font-size: 32px; }\np { color: #666; font-size: 16px; }`,
+    js: '',
+    json: ''
+  };
+  const importedFiles = {html: null, css: null, js: null, json: null};
+  const localAssets = new Map();
+  // Preserve named uploaded JSONs for page JS using fetch('./data/file.json').
+  // The primary JSON editor remains available as window.pageData.
+  const localJsonAssets = new Map();
+  const pastedImages = [];
+  const placeholders = {
+    html: '<main class="page">\n  <h1>페이지 제목</h1>\n  <p>문단을 입력하세요.</p>\n  <img src="hero.png" alt="예시">\n</main>',
+    css: '.page { padding: 24px; background: #fff; }\nh1 { font-size: 32px; color: #111; }\nimg { width: 100%; height: auto; }',
+    js: '// window.pageData / window.jsonData를 사용할 수 있습니다.\nconst title = window.pageData?.title || "Hello Figma";\ndocument.querySelector("h1").textContent = title;',
+    json: '{\n  "title": "Hello Figma",\n  "items": ["첫 번째", "두 번째"]\n}'
+  };
+  const urlInput = $('urlInput');
+  const loadUrlBtn = $('loadUrlBtn');
+  let sourceUrl = null;
+  // Preserve the remote document's executable scripts. Its JSON resources are
+  // requested through a narrow UI bridge because srcdoc has an opaque origin.
+  let linkScripts = [];
+  let linkScriptCount = 0;
+  let runtimeJsonLoaded = 0;
+  let runtimeFetchErrors = [];
+  let linkScriptErrors = [];
+  let runtimeRequestCount = 0;
+
+  let renderToken = 0;
+  let reviewConfirmed = false;
+  let reviewOpen = false;
+  let reviewWhenReady = false;
+  // Tracks the current iframe navigation. Late messages from older renders are ignored.
+  let renderBooted = false;
+  let renderWarningTimer = null;
+  let renderFailureTimer = null;
+  const reviewButton = $('reviewBtn');
+  const importButton = $('importBtn');
+  const renderViewport = $('renderViewport');
+  function updatePreviewScale() {
+    const width = Math.max(100, Math.min(3000, Number(widthInput.value) || 1440));
+    const available = Math.max(1, renderViewport.clientWidth - 2 || 326);
+    const scale = Math.min(1, available / width);
+    preview.style.transform = 'scale(' + scale + ')';
+    // The measurement iframe stays at a stable 900px viewport. Scroll inside
+    // the iframe for long pages; never scale its DOM viewport to measuredHeight.
+    $('renderStage').style.height = Math.max(1, Math.ceil(900 * scale)) + 'px';
+    $('renderStage').style.width = Math.max(1, Math.ceil(width * scale)) + 'px';
+  }
+  reviewButton.addEventListener('click', () => {
+    // Opening the viewer must not depend on a network-dependent completion event.
+    // The Figma insert action remains disabled until the collector acknowledges readiness.
+    if (!previewReady && reviewButton.dataset.retry === 'true') {
+      reviewButton.dataset.retry = 'false';
+      render({keepApproval: reviewConfirmed});
+      reviewWhenReady = true;
+    }
+    reviewOpen = !reviewOpen;
+    renderViewport.classList.toggle('render-check__viewport--visible', reviewOpen);
+    reviewButton.setAttribute('aria-expanded', String(reviewOpen));
+    reviewButton.textContent = reviewOpen ? '뷰 닫기' : '렌더링 확인';
+    if (reviewOpen) {
+      updatePreviewScale();
+      renderViewport.scrollTop = 0;
+      preview.contentWindow?.postMessage({type:'SCROLL_TO', y:importedThrough}, '*');
+      if (previewReady) {
+        reviewConfirmed = true;
+        reviewWhenReady = false;
+        $('reviewStatus').textContent = '렌더링 확인 완료 · Figma 삽입 가능';
+      } else {
+        reviewWhenReady = true;
+        $('reviewStatus').textContent = 'HTML 화면 열림 · 데이터 렌더링 확인 중';
+        // The renderer may still be parsing a remote script: request an explicit status.
+        preview.contentWindow?.postMessage({type:'RENDER_PROBE',renderId:renderToken}, '*');
+      }
+    } else if (!previewReady) {
+      reviewWhenReady = false;
+      $('reviewStatus').textContent = '뷰 닫힘 · 렌더링 확인 대기';
+    }
+    updateChunkUI();
+  });
+
+  const resourceUrl = (value, origin) => {
+    try { return new URL(value, origin).href; } catch { return value; }
+  };
+  const rewriteCssUrls = (css, base) => css.replace(/url\(\s*(["']?)([^"')]+)\1\s*\)/gi, (_whole, quote, path) => {
+    const value = path.trim();
+    if (!value || /^(data:|blob:|#)/i.test(value)) return `url(${quote}${value}${quote})`;
+    return `url("${resourceUrl(value, base)}")`;
+  });
+  const decodePage = async (response) => {
+    const contentType = response.headers.get('content-type') || '';
+    const bytes = await response.arrayBuffer();
+    if (bytes.byteLength > 6 * 1024 * 1024) throw new Error('페이지 크기가 6MB를 초과합니다.');
+    const match = contentType.match(/charset=([^;\s]+)/i);
+    const encoding = match ? match[1] : 'utf-8';
+    try { return new TextDecoder(encoding).decode(bytes); }
+    catch { return new TextDecoder('utf-8').decode(bytes); }
+  };
+  async function loadWebsite() {
+    const raw = urlInput.value.trim();
+    let parsed;
+    try { parsed = new URL(raw); }
+    catch { throw new Error('유효한 웹사이트 주소를 입력하세요.'); }
+    if (!/^https?:$/.test(parsed.protocol)) throw new Error('HTTP 또는 HTTPS 주소만 지원합니다.');
+    loadUrlBtn.disabled = true;
+    $('errorText').textContent = '';
+    $('statusText').textContent = '웹페이지 HTML 가져오는 중...';
+    try {
+      // Direct-only: no third-party proxy; a site must allow cross-origin reads.
+      const response = await fetch(parsed.href, {mode:'cors', credentials:'omit', redirect:'follow'});
+      if (!response.ok) throw new Error('웹페이지 응답 오류: HTTP ' + response.status);
+      const actualUrl = response.url || parsed.href;
+      const htmlText = await decodePage(response);
+      const doc = new DOMParser().parseFromString(htmlText, 'text/html');
+      const baseTag = doc.querySelector('base[href]');
+      const baseUrl = baseTag ? resourceUrl(baseTag.getAttribute('href'), actualUrl) : actualUrl;
+      let pageCss = '';
+      // Keep script order: libraries must initialize before the code that
+      // constructs tables and page navigation. Only executable JS is retained;
+      // JSON-LD and application/json scripts remain inert DOM data.
+      const nextScripts = [];
+      for (const script of [...doc.querySelectorAll('script')]) {
+        const kind = (script.getAttribute('type') || '').trim().toLowerCase();
+        if (kind === 'application/json' || kind === 'application/ld+json') {
+          // Preserve inline JSON blocks used by document.getElementById().
+          if (script.closest('head')) doc.body.appendChild(script);
+          continue;
+        }
+        if (kind && !['text/javascript','application/javascript','module'].includes(kind)) {
+          script.remove();
+          continue;
+        }
+        const src = script.getAttribute('src');
+        if (src) nextScripts.push({src:resourceUrl(src,baseUrl),module:kind==='module'});
+        else if ((script.textContent || '').trim()) nextScripts.push({text:script.textContent,module:kind==='module'});
+        script.remove();
+      }
+      const inlineStyles = [...doc.querySelectorAll('style')];
+      for (const style of inlineStyles) {
+        pageCss += '\n' + rewriteCssUrls(style.textContent || '', baseUrl);
+        style.remove();
+      }
+      let loadedCss = 0;
+      let skippedCss = 0;
+      const cssImports = [];
+      const links = [...doc.querySelectorAll('link[rel~="stylesheet"][href]')].slice(0, 24);
+      for (const link of links) {
+        const href = resourceUrl(link.getAttribute('href'), baseUrl);
+        try {
+          const stylesheet = await fetch(href, {mode:'cors', credentials:'omit'});
+          if (!stylesheet.ok) throw new Error(String(stylesheet.status));
+          pageCss += '\n' + rewriteCssUrls(await stylesheet.text(), href);
+          loadedCss++;
+        } catch {
+          skippedCss++;
+          // Stylesheets may load as CSS even when the response is not CORS-readable.
+          // Keep the original URL, rather than silently dropping the page style.
+          if (/^https?:\/\//i.test(href)) cssImports.push('@import url("' + href.replace(/"/g,'%22') + '");');
+        }
+        link.remove();
+      }
+      // Resolve lazy images and srcset before srcdoc: srcset can override src.
+      for (const img of doc.querySelectorAll('img')) {
+        const initial = img.getAttribute('src') || img.getAttribute('data-src') || img.getAttribute('data-original') || '';
+        const firstSrcset = (img.getAttribute('srcset') || img.getAttribute('data-srcset') || '').split(',')[0].trim().split(/\s+/)[0];
+        if (!initial && firstSrcset) img.setAttribute('src', firstSrcset);
+        else if (initial && !img.getAttribute('src')) img.setAttribute('src', initial);
+        img.removeAttribute('srcset');
+        img.removeAttribute('data-srcset');
+        img.setAttribute('loading', 'eager');
+      }
+      // Convert relative resources to absolute references before srcdoc rendering.
+      for (const node of doc.querySelectorAll('[src],[href],[poster]')) {
+        for (const attr of ['src', 'href', 'poster']) {
+          const value = node.getAttribute(attr);
+          if (value && !/^(data:|blob:|javascript:|#)/i.test(value)) node.setAttribute(attr, resourceUrl(value, baseUrl));
+        }
+      }
+      for (const node of doc.querySelectorAll('[style]')) node.setAttribute('style', rewriteCssUrls(node.getAttribute('style') || '', baseUrl));
+      // The executable scripts are rendered later in the isolated iframe.
+      // Keep inert JSON blocks accessible to page scripts by their original IDs.
+      for (const node of doc.querySelectorAll('iframe,object,embed,base,meta[http-equiv="refresh"]')) node.remove();
+      for (const node of doc.querySelectorAll('*')) {
+        for (const attr of [...node.attributes]) {
+          if (/^on/i.test(attr.name)) node.removeAttribute(attr.name);
+        }
+      }
+      code.html = doc.body.innerHTML;
+      code.css = cssImports.join('\n') + '\nhtml,body{margin:0;}\n' + pageCss;
+      code.js = '';
+      sourceUrl = actualUrl;
+      linkScripts = nextScripts;
+      linkScriptCount = nextScripts.length;
+      runtimeJsonLoaded = 0;
+      runtimeFetchErrors = [];
+      linkScriptErrors = [];
+      runtimeRequestCount = 0;
+      importedFiles.html = new URL(actualUrl).hostname + ' (URL)';
+      importedFiles.css = loadedCss ? loadedCss + ' linked CSS' : null;
+      importedFiles.js = null;
+      importedFiles.json = null;
+      code.json = '';
+      editor.value = code[active];
+      refreshFileList();
+      restartPagination();
+      render();
+      $('statusText').textContent = `URL 로드 · JS ${nextScripts.length}개 · CSS ${loadedCss}개` + (skippedCss ? ` · CSS 폴백 ${skippedCss}개` : '');
+      if (skippedCss) $('errorText').textContent = `${skippedCss}개 CSS는 CSS @import 방식으로 다시 로드합니다.`;
+      if (!nextScripts.length) $('errorText').textContent = '실행 가능한 JS 파일이 발견되지 않았습니다. 사이트가 빌드된 JS 앱이라면 Link로 표가 나타나지 않을 수 있습니다.';
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      $('errorText').textContent = /fetch|network|cors|failed/i.test(detail) ?
+        '사이트가 CORS 접근을 허용하지 않거나 네트워크에서 차단됐습니다. HTML/CSS 파일 업로드를 사용하거나 CORS 허용 서버를 이용하세요. (' + detail + ')' : detail;
+      $('statusText').textContent = 'URL 불러오기 실패';
+    } finally { loadUrlBtn.disabled = false; }
+  }
+  loadUrlBtn.addEventListener('click', loadWebsite);
+  urlInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !event.isComposing) loadWebsite();
+  });
+  const extensionToTab = filename => {
+    const ext = filename.toLowerCase().split('.').pop();
+    if (ext === 'html' || ext === 'htm') return 'html';
+    if (ext === 'css') return 'css';
+    if (ext === 'js' || ext === 'mjs') return 'js';
+    if (ext === 'json') return 'json';
+    return null;
+  };
+  const MAX_FILE_SIZE = 1024 * 1024; // 1 MiB per source file
+  function readSourceFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error(file.name + ': 파일을 읽을 수 없습니다.'));
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.readAsText(file, 'UTF-8');
+    });
+  }
+  function assetName(path) {
+    try { return decodeURIComponent(path.split(/[?#]/)[0].split('/').pop() || '').toLowerCase(); }
+    catch { return path.toLowerCase().split('/').pop(); }
+  }
+  async function readAsset(file) {
+    // Normalize uploaded PNG/JPEG/GIF/WebP/SVG to PNG pixels supported by
+    // figma.createImage(). This also prevents the 4096px dimension error.
+    const blobUrl = URL.createObjectURL(file);
+    try {
+      const picture = await new Promise((resolve,reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error(file.name + ': 이미지 디코딩 실패'));
+        image.src = blobUrl;
+      });
+      const scale = Math.min(1, 4096 / picture.naturalWidth, 4096 / picture.naturalHeight);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(picture.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(picture.naturalHeight * scale));
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('이미지 변환 캔버스를 사용할 수 없습니다.');
+      context.drawImage(picture,0,0,canvas.width,canvas.height);
+      return canvas.toDataURL('image/png');
+    } finally { URL.revokeObjectURL(blobUrl); }
+  }
+  function resolveAssetsInHtml(markup) {
+    if (!localAssets.size && !pastedImages.length) return markup;
+    const documentCopy = new DOMParser().parseFromString(markup,'text/html');
+    let pastedIndex = 0;
+    for(const img of documentCopy.querySelectorAll('img')) {
+      const raw = img.getAttribute('src') || '';
+      if (/^(data:|blob:|https?:|\/\/)/i.test(raw)) continue;
+      const asset = localAssets.get(assetName(raw));
+      // Clipboard images are used only for unresolved <img> references.
+      const source = asset || pastedImages[pastedIndex];
+      if (source) {
+        img.setAttribute('src',source);
+        img.removeAttribute('srcset');
+        if (!asset) pastedIndex++;
+      }
+    }
+    return documentCopy.body.innerHTML;
+  }
+  function resolveCssAssets(styles) {
+    if (!localAssets.size) return styles;
+    return styles.replace(/url\(\s*(["']?)([^"')]+)\1\s*\)/gi, (whole, quote, src) => {
+      const trimmed = src.trim();
+      if (/^(data:|https?:|blob:|\/\/|#)/i.test(trimmed)) return whole;
+      const replacement = localAssets.get(assetName(trimmed));
+      return replacement ? 'url("' + replacement + '")' : whole;
+    });
+  }
+  function refreshFileList() {
+    const list = $('fileList');
+    list.replaceChildren();
+    const loaded = Object.entries(importedFiles).filter(([_, name]) => !!name);
+    for(const name of localAssets.keys()) loaded.push(["IMG",name]);
+    pastedImages.forEach((_,index)=>loaded.push(["PASTE",'클립보드 이미지 '+(index+1)]));
+    if (!loaded.length) {
+      const none = document.createElement('span');
+      none.className = 'upload__file upload__file--empty';
+      none.textContent = '선택한 파일 없음';
+      list.appendChild(none);
+      return;
+    }
+    for (const [type, name] of loaded) {
+      const chip = document.createElement('span');
+      chip.className = 'upload__file';
+      chip.textContent = type.toUpperCase() + ' · ' + name;
+      chip.title = name;
+      list.appendChild(chip);
+    }
+  }
+  async function uploadFiles(fileList) {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+    $('uploadBtn').disabled = true;
+    $('errorText').textContent = '';
+    try {
+      const results = [];
+      for (const file of files) {
+        const tab = extensionToTab(file.name);
+        const isImage = /\.(png|jpe?g|gif|webp|svg)$/i.test(file.name);
+        if (!tab && !isImage) throw new Error('지원하지 않는 형식: '+file.name);
+        if (file.size > (isImage ? 8*1024*1024 : MAX_FILE_SIZE)) throw new Error('파일 크기 제한: '+file.name);
+        if (isImage) results.push({asset:true,name:file.name,text:await readAsset(file)});
+        else results.push({tab,name:file.name,text:await readSourceFile(file)});
+      }
+      // Commit the batch only after every file has been read successfully.
+      for (const result of results) {
+        if(result.asset) localAssets.set(assetName(result.name),result.text);
+        else {
+          code[result.tab]=result.text;
+          importedFiles[result.tab]=result.name;
+          if (result.tab === 'json') localJsonAssets.set(assetName(result.name),result.text);
+        }
+      }
+      // Replacing a linked page with a local HTML file must not replay the
+      // old page's remote scripts or retain its URL base.
+      if (results.some(result => result.tab === 'html')) {
+        sourceUrl=null;linkScripts=[];linkScriptCount=0;
+        runtimeJsonLoaded=0;runtimeFetchErrors=[];linkScriptErrors=[];
+      }
+      editor.value = code[active];
+      refreshFileList();
+      $('statusText').textContent = results.length + '개 파일 업로드 완료';
+      restartPagination();
+      render();
+      $('statusText').textContent = results.length + '개 파일 불러옴 · 미리보기 갱신 중';
+    } catch (error) {
+      $('errorText').textContent = error instanceof Error ? error.message : String(error);
+    } finally {
+      $('uploadBtn').disabled = false;
+      $('fileInput').value = '';
+    }
+  }
+  async function storePastedImage(blob) {
+    if (!blob || !blob.type.startsWith('image/')) throw new Error('클립보드에서 이미지가 발견되지 않았습니다.');
+    if (blob.size > 8*1024*1024) throw new Error('이미지가 8MB를 초과합니다.');
+    if (pastedImages.length >= 30) throw new Error('클립보드 이미지는 최대 30개까지 지원합니다.');
+    const image = new File([blob], 'clipboard.png', {type:blob.type});
+    pastedImages.push(await readAsset(image));
+    refreshFileList();
+    restartPagination();
+    render();
+    $('statusText').textContent = '클립보드 이미지 '+pastedImages.length+'개 연결 완료';
+  }
+  $('clipboardImageBtn').addEventListener('click', async () => {
+    try {
+      if (!navigator.clipboard?.read) throw new Error('브라우저 클립보드 직접 읽기가 제한됐습니다. 플러그인 창을 클릭하고 Ctrl/⌘+V를 사용하세요.');
+      const items = await navigator.clipboard.read();
+      const item = items.find(candidate=>candidate.types.some(type=>type.startsWith('image/')));
+      if (!item) throw new Error('클립보드에 복사된 이미지가 없습니다.');
+      const type = item.types.find(type=>type.startsWith('image/'));
+      await storePastedImage(await item.getType(type));
+    } catch (error) { $('errorText').textContent = error instanceof Error ? error.message : String(error); }
+  });
+  document.addEventListener('paste', async event => {
+    if (document.activeElement === editor || document.activeElement === urlInput) return;
+    const item = [...(event.clipboardData?.items || [])].find(item=>item.kind==='file' && item.type.startsWith('image/'));
+    if (!item) return;
+    event.preventDefault();
+    try { await storePastedImage(item.getAsFile()); }
+    catch (error) { $('errorText').textContent = error instanceof Error ? error.message : String(error); }
+  });
+  $('uploadBtn').addEventListener('click', () => $('fileInput').click());
+  $('fileInput').addEventListener('change', event => uploadFiles(event.target.files));
+  let active = 'html';
+  let previewReady = false;
+  let activeRequest = null;
+  let measuredHeight = 100;
+  // Each import is bounded to 6,000 CSS px; total document height remains measured independently.
+  const CHUNK_LIMIT = 6000;
+  let importedThrough = 0;
+  let pendingChunk = null;
+  function chunkDescription() {
+    const end = Math.min(measuredHeight, importedThrough + CHUNK_LIMIT);
+    return importedThrough >= measuredHeight
+      ? '전체 HTML 가져오기 완료 (' + measuredHeight + 'px)'
+      : '다음 삽입 영역: ' + importedThrough + '–' + end + 'px / 전체 ' + measuredHeight + 'px';
+  }
+  function updateChunkUI() {
+    $('chunkProgress').textContent = chunkDescription();
+    importButton.textContent = importedThrough ? '다음 영역 Figma에 삽입' : 'Figma에 삽입';
+    importButton.disabled = !reviewConfirmed || !previewReady || importedThrough >= measuredHeight || !!pendingChunk;
+  }
+  function restartPagination() {
+    importedThrough = 0;
+    pendingChunk = null;
+    updateChunkUI();
+  }
+
+
+  // This collector runs inside an opaque-origin sandboxed preview iframe.
+  // No parent DOM access or allow-same-origin privilege is necessary.
+  const collector = function () {
+    // This message is intentionally emitted before expensive DOM traversal or remote JS.
+    parent.postMessage({type:'RENDER_STARTED',renderId:window.__htfRenderId},'*');
+    const hex = color => {
+      const m = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+      return m ? '#' + m.slice(1, 4).map(v => Number(v).toString(16).padStart(2, '0')).join('') : '';
+    };
+    const transparent = value => value === 'transparent' || value === 'rgba(0, 0, 0, 0)' || value === 'rgb(0 0 0 / 0)';
+    const measure = (node, maxWidth, maxHeight) => {
+      const r = node.getBoundingClientRect();
+      // DOMRect coordinates are viewport-relative: convert to page coordinates
+      // so scrolling to chunk 2 never corrupts height or layer positions.
+      const x = Math.max(0, r.left + window.scrollX), y = Math.max(0, r.top + window.scrollY);
+      return { x, y, width: Math.min(r.right + window.scrollX, maxWidth) - x, height: Math.min(r.bottom + window.scrollY, maxHeight) - y };
+    };
+    // URL imports commonly include 100vh/100% wrappers or min-height rules.
+    // Neutralize only percentage/viewport *heights*, keeping explicit px heights,
+    // padding and regular flow layout intact. Do this once per iframe render.
+    let normalized = false;
+    function normalizeFluidHeights() {
+      if (normalized) return;
+      normalized = true;
+      const fluid = /(?:^|\s)(?:[\d.]+\s*(?:%|vh|dvh|svh|lvh)|(?:calc|min|max|clamp)\([^)]*(?:%|vh|dvh|svh|lvh))/i;
+      const touched = new Set();
+      function apply(element, height, minHeight) {
+        if (!(element instanceof HTMLElement)) return;
+        if (fluid.test(height || '')) element.style.setProperty('height', 'auto', 'important');
+        if (fluid.test(minHeight || '')) element.style.setProperty('min-height', '0px', 'important');
+        touched.add(element);
+      }
+      for (const element of [document.documentElement, document.body, ...document.body.querySelectorAll('*')]) {
+        apply(element, element.style?.height, element.style?.minHeight);
+      }
+      const scan = rules => {
+        for (const rule of [...rules]) {
+          if (rule.cssRules) { try { scan(rule.cssRules); } catch (_) {} }
+          if (!rule.selectorText || !rule.style) continue;
+          const h = rule.style.getPropertyValue('height');
+          const m = rule.style.getPropertyValue('min-height');
+          if (!fluid.test(h) && !fluid.test(m)) continue;
+          try { document.querySelectorAll(rule.selectorText).forEach(element => apply(element,h,m)); }
+          catch (_) { /* pseudo selector or unsupported selector */ }
+        }
+      };
+      for (const sheet of [...document.styleSheets]) {
+        try { scan(sheet.cssRules); } catch (_) { /* CORS stylesheets */ }
+      }
+    }
+    const boxPadding = element => {
+      const style = getComputedStyle(element);
+      return {top: Math.max(0,parseFloat(style.paddingTop)||0), bottom: Math.max(0,parseFloat(style.paddingBottom)||0)};
+    };
+    // Compute the bottom of *real content* instead of document scrollHeight.
+    // Each visible leaf contributes its own paint/text bounds; ancestors add
+    // trailing padding ONCE only when it moves the end beyond its children.
+    // This avoids the old cumulative-padding inflation on imported URLs.
+    function contentBottom(element, depth = 0) {
+      if (depth > 96) return 0;
+      const style = getComputedStyle(element);
+      if (style.display === 'none' || style.visibility === 'hidden' || style.position === 'fixed') return 0;
+      if (['SCRIPT','STYLE','META','LINK','TEMPLATE'].includes(element.tagName)) return 0;
+      const rect = element.getBoundingClientRect();
+      if (!Number.isFinite(rect.top) || !Number.isFinite(rect.bottom)) return 0;
+      const children = [...element.children].filter(child => {
+        const cs = getComputedStyle(child);
+        return cs.display !== 'none' && cs.visibility !== 'hidden' && cs.position !== 'fixed';
+      });
+      let bottom = 0;
+      for (const child of children) bottom = Math.max(bottom, contentBottom(child,depth+1));
+      let directTextBottom = 0;
+      for (const node of element.childNodes) {
+        if (node.nodeType !== 3 || !(node.textContent || '').trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        for (const segment of range.getClientRects()) {
+          if (segment.height > 0 && Number.isFinite(segment.bottom)) directTextBottom = Math.max(directTextBottom, segment.bottom + window.scrollY);
+        }
+        range.detach?.();
+      }
+      bottom = Math.max(bottom, directTextBottom);
+      const isReplaced = ['IMG','SVG','CANVAS','VIDEO','IFRAME','INPUT','TEXTAREA','BUTTON','HR'].includes(element.tagName);
+      const painted = style.backgroundImage !== 'none' || !transparent(style.backgroundColor);
+      // Intentional fixed-height empty panels count, but stretched wrappers don't.
+      const isLeaf = children.length === 0 && !directTextBottom;
+      if ((isReplaced || (isLeaf && painted)) && rect.height > 0 && rect.width > 0) bottom = Math.max(bottom, rect.bottom + window.scrollY);
+      if (bottom > 0) {
+        const pad = boxPadding(element);
+        // Children already incorporate top padding through their actual DOM positions.
+        // Only add the container's own trailing padding to its furthest child.
+        if (children.length || directTextBottom) bottom += pad.bottom;
+      }
+      return bottom;
+    }
+    function normalizeBrokenImages() {
+      for (const image of document.querySelectorAll('img')) {
+        const src = image.getAttribute('src') || '';
+        if (src && (!image.complete || image.naturalWidth > 0)) continue;
+        if (image.dataset.htfPlaceholderSized === '1') continue;
+        const rect = image.getBoundingClientRect();
+        const attrWidth = Number.parseFloat(image.getAttribute('width') || '') || 0;
+        const attrHeight = Number.parseFloat(image.getAttribute('height') || '') || 0;
+        const minWidth = attrWidth || Math.max(160, rect.width);
+        const minHeight = attrHeight || Math.max(96, rect.height);
+        // Do not alter working images. Only failed images receive a visible slot.
+        if (rect.width < minWidth) image.style.setProperty('min-width', minWidth + 'px', 'important');
+        if (rect.height < minHeight) image.style.setProperty('min-height', minHeight + 'px', 'important');
+        image.dataset.htfPlaceholderSized = '1';
+      }
+    }
+    function documentHeight() {
+      normalizeFluidHeights();
+      normalizeBrokenImages();
+      const body = document.body;
+      if (!body) return 1;
+      const bottom = contentBottom(body);
+      const top = Math.max(0, body.getBoundingClientRect().top + window.scrollY);
+      // Finite browser/Figma bounds; the 6k-per-insert limit remains separate.
+      return Math.max(1, Math.min(1000000, Math.ceil(Math.max(0,bottom-top))));
+    }
+    let lastHeight = 0;
+    let heightTimer = 0;
+    const reportHeight = () => {
+      const height = documentHeight();
+      if (height !== lastHeight) {
+        lastHeight = height;
+        parent.postMessage({type: 'CONTENT_HEIGHT', height, renderId:window.__htfRenderId}, '*');
+        reportStructure();
+      }
+    };
+    const scheduleHeight = () => {
+      clearTimeout(heightTimer);
+      heightTimer = setTimeout(reportHeight, 70);
+    };
+    const SEMANTIC = new Set(['HEADER','MAIN','SECTION','FOOTER','NAV','ARTICLE','ASIDE']);
+    const semanticNames = ['header','main','section','footer','nav','article','aside'];
+    const collect = (width, includeBackground, fromY = 0, maxChunkHeight = 6000) => {
+      const totalHeight = documentHeight();
+      const height = totalHeight;
+      const layers = [];
+      const counts = {header:0,main:0,section:0,footer:0,nav:0,article:0,aside:0, repeatedGroups:0, repeatedItems:0};
+      let nextFrameId = 0;
+      const pageBackground = backgroundPaint(getComputedStyle(document.body));
+      if (includeBackground && pageBackground) {
+        layers.push({type:'RECTANGLE',name:'Page background',parentId:null,x:0,y:0,width,height,...pageBackground});
+      }
+      const signature = element => {
+        if (!element || !element.tagName) return '';
+        const tag = element.tagName;
+        if (['SCRIPT', 'STYLE', 'IMG', 'BR'].includes(tag)) return '';
+        const cls = typeof element.className === 'string'
+          ? element.className.trim().split(/\s+/).filter(Boolean).slice(0, 2).join('.') : '';
+        // Require a stable class or a recognizable card/list item structure.
+        const children = [...element.children].slice(0, 5).map(child => child.tagName.toLowerCase()).join('-');
+        return tag + '|' + cls + '|' + children;
+      };
+      const visitChildren = (element, parentId) => {
+        const children = [...element.children].filter(child => !['SCRIPT','STYLE','META','LINK','TEMPLATE'].includes(child.tagName));
+        const groups = new Map();
+        children.forEach(child => {
+          const key = signature(child);
+          if (!key) return;
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(child);
+        });
+        const processed = new Set();
+        for (const child of children) {
+          if (processed.has(child)) continue;
+          const key = signature(child);
+          const siblings = groups.get(key) || [];
+          // Do not group generic one-line markup. A repeated component needs
+          // class names, nested children, or list-item/article semantics.
+          const isComponent = !consumedInline.has(child) && siblings.length >= 2 &&
+            (child.classList.length > 0 || child.children.length > 0 || ['LI','ARTICLE'].includes(child.tagName));
+          if (!isComponent) {
+            visit(child, parentId, false);
+            processed.add(child);
+            continue;
+          }
+          let left=Infinity, top=Infinity, right=-Infinity, bottom=-Infinity;
+          for (const member of siblings) {
+            const r = member.getBoundingClientRect();
+            left=Math.min(left,r.left+window.scrollX);top=Math.min(top,r.top+window.scrollY);
+            right=Math.max(right,r.right+window.scrollX);bottom=Math.max(bottom,r.bottom+window.scrollY);
+          }
+          const groupId = 'repeat-' + (++nextFrameId);
+          const label = child.classList.length ? child.classList[0] : child.tagName.toLowerCase();
+          layers.push({type:'FRAME',id:groupId,parentId,tag:'repeat',name:'Repeated · '+label+' ('+siblings.length+')',
+            x:Math.max(0,left),y:Math.max(0,top),width:Math.max(1,right-left),height:Math.max(1,bottom-top),paddingTop:0,paddingBottom:0});
+          counts.repeatedGroups++;
+          for (const member of siblings) {
+            processed.add(member);
+            counts.repeatedItems++;
+            visit(member, groupId, true);
+          }
+        }
+      };
+      // Inline descendants (span/strong/em/br) form ONE editable text node.
+      // Every run retains a character range, so styled spans do not move or overlap.
+      const consumedInline = new WeakSet();
+      const inlineTags = new Set(['SPAN','STRONG','B','EM','I','A','SMALL','MARK','U','S','CODE','ABBR','TIME','SUP','SUB','BR']);
+      const noTextOwner = new Set(['HEADER','MAIN','SECTION','FOOTER','NAV','ARTICLE','ASIDE','UL','OL','TABLE','TBODY','TR','FORM','FIGURE']);
+      const colorToRGBA = input => {
+        const value=(input||'').trim();
+        const h=value.match(/^#([0-9a-f]{3,8})$/i);
+        if(h){
+          let v=h[1];if(v.length===3||v.length===4)v=[...v].map(ch=>ch+ch).join('');
+          if(v.length===6||v.length===8)return {r:parseInt(v.slice(0,2),16)/255,g:parseInt(v.slice(2,4),16)/255,b:parseInt(v.slice(4,6),16)/255,a:v.length===8?parseInt(v.slice(6,8),16)/255:1};
+        }
+        const match=value.match(/rgba?\(\s*(\d+(?:\.\d+)?)\s*[,\s]\s*(\d+(?:\.\d+)?)\s*[,\s]\s*(\d+(?:\.\d+)?)(?:\s*[,\/]\s*([\d.]+))?\s*\)/i);
+        if(match)return {r:Math.min(1,+match[1]/255),g:Math.min(1,+match[2]/255),b:Math.min(1,+match[3]/255),a:match[4]===undefined?1:Math.max(0,Math.min(1,+match[4]))};
+        // Resolve named colors without mutating the source element.
+        const probe=document.createElement('span');
+        probe.style.color=value;
+        if(!probe.style.color)return null;
+        document.body.appendChild(probe);
+        const resolved=getComputedStyle(probe).color;
+        probe.remove();
+        const m=resolved.match(/rgba?\(\s*(\d+)\s*[,\s]\s*(\d+)\s*[,\s]\s*(\d+)(?:\s*[,\/]\s*([\d.]+))?/);
+        return m?{r:+m[1]/255,g:+m[2]/255,b:+m[3]/255,a:m[4]===undefined?1:+m[4]}:null;
+      };
+      const splitComma = value => {
+        const result=[];let depth=0,start=0;
+        for(let i=0;i<value.length;i++){
+          if(value[i]==='(')depth++;
+          if(value[i]===')')depth--;
+          if(value[i]===','&&depth===0){result.push(value.slice(start,i).trim());start=i+1;}
+        }
+        result.push(value.slice(start).trim());return result;
+      };
+      const gradientFor = style => {
+        const clip=style.backgroundClip||style.webkitBackgroundClip||'';
+        const fill=style.webkitTextFillColor||style.color||'';
+        if(!/text/i.test(clip)||(!transparent(style.color)&&!transparent(fill)))return null;
+        const matched=(style.backgroundImage||'').match(/linear-gradient\((.*)\)/i);
+        if(!matched)return null;
+        const pieces=splitComma(matched[1]);
+        let direction='right';
+        if(/\b(to\s+left|270deg)\b/i.test(pieces[0]))direction='left';
+        else if(/\b(to\s+bottom|180deg)\b/i.test(pieces[0]))direction='down';
+        else if(/\b(to\s+top|0deg|360deg)\b/i.test(pieces[0]))direction='up';
+        const stops=[];
+        for(const piece of pieces){
+          const match=piece.match(/(#[0-9a-f]{3,8}\b|rgba?\([^)]*\))/i);
+          if(!match)continue;
+          const color=colorToRGBA(match[1]);if(!color)continue;
+          const rest=piece.slice(match.index+match[0].length);
+          const percent=rest.match(/\b(\d+(?:\.\d+)?)%/);
+          stops.push({position:percent?Math.max(0,Math.min(1,+percent[1]/100)):null,color});
+        }
+        if(stops.length<2)return null;
+        stops.forEach((stop,i)=>{if(stop.position===null)stop.position=i/(stops.length-1);});
+        return {direction,stops};
+      };
+      function backgroundPaint(style) {
+        const backgroundImage = style.backgroundImage || 'none';
+        const textClip = /text/i.test(style.backgroundClip || style.webkitBackgroundClip || '');
+        if (textClip) return null;
+        // Computed backgroundImage resolves CSS variables and relative URLs.
+        const gradientMatch = backgroundImage.match(/(?:repeating-)?(linear|radial)-gradient\(/i);
+        let gradient = null;
+        if (gradientMatch) {
+          const start = gradientMatch.index + gradientMatch[0].length;
+          let depth = 1, end = start;
+          for (; end < backgroundImage.length; end++) {
+            if (backgroundImage[end] === '(') depth++;
+            if (backgroundImage[end] === ')' && --depth === 0) break;
+          }
+          const parts = splitComma(backgroundImage.slice(start, end));
+          const firstPart = parts[0] || '';
+          let direction = 'right';
+          if (/to\s+left|270deg/i.test(firstPart)) direction = 'left';
+          else if (/to\s+bottom|180deg/i.test(firstPart)) direction = 'down';
+          else if (/to\s+top|0deg|360deg/i.test(firstPart)) direction = 'up';
+          const stops=[];
+          for (const part of parts) {
+            const m=part.match(/(#[0-9a-f]{3,8}\b|rgba?\([^)]*\))/i);
+            if (!m) continue;
+            const color=colorToRGBA(m[1]);
+            if (!color) continue;
+            const percent=part.slice(m.index+m[0].length).match(/(-?\d+(?:\.\d+)?)%/);
+            stops.push({color,position:percent?Math.max(0,Math.min(1,Number(percent[1])/100)):null});
+          }
+          if (stops.length>=2) {
+            stops.forEach((stop,i)=>{if(stop.position===null)stop.position=i/(stops.length-1);});
+            gradient={type:gradientMatch[1].toLowerCase(),direction,stops};
+          }
+        }
+        const urlMatch=backgroundImage.match(/url\(\s*(?:"([^"]+)"|'([^']+)'|([^)]*))\s*\)/i);
+        const imageSrc=urlMatch?(urlMatch[1]||urlMatch[2]||urlMatch[3]||'').trim():'';
+        const backgroundColor=transparent(style.backgroundColor)?null:colorToRGBA(style.backgroundColor);
+        const fill=backgroundColor?'#'+[backgroundColor.r,backgroundColor.g,backgroundColor.b].map(v=>Math.round(255*v).toString(16).padStart(2,'0')).join(''):'';
+        return (gradient || imageSrc || fill) ? {fill,gradient,imageSrc,opacity:backgroundColor?.a??1} : null;
+      }
+      const styleAt = element => {
+        const style=getComputedStyle(element);
+        const fill=gradientFor(style);
+        const rgba=colorToRGBA(style.color);
+        // Never turn transparent gradient text into black by default.
+        const fallback=fill?.stops?.[0]?.color;
+        const rgb=rgba && rgba.a>0 ? rgba : fallback;
+        const color=rgb ? '#'+[rgb.r,rgb.g,rgb.b].map(v=>Math.round(255*v).toString(16).padStart(2,'0')).join('') : '#1e1e1e';
+        return {color,gradient:fill,fontFamily:style.fontFamily,fontWeight:parseInt(style.fontWeight,10)||400,
+          fontSize:parseFloat(style.fontSize)||14,lineHeight:style.lineHeight==='normal'?0:(parseFloat(style.lineHeight)||0),
+          letterSpacing:style.letterSpacing==='normal'?0:(parseFloat(style.letterSpacing)||0)};
+      };
+      function inlineTextCandidate(element) {
+        if(noTextOwner.has(element.tagName)||['IMG','SVG','CANVAS','VIDEO','IFRAME'].includes(element.tagName))return false;
+        return [...element.childNodes].some(n=>
+          (n.nodeType===3 && !!(n.textContent||'').trim()) ||
+          (n.nodeType===1 && inlineTags.has(n.tagName) && n.tagName!=='BR' && !!(n.textContent||'').trim()));
+      }
+      function collectInlineText(element) {
+        let text='';const runs=[];const textNodes=[];
+        const append=(chunk,styled) => {
+          if(!chunk)return;
+          const start=text.length;text+=chunk;
+          const key=JSON.stringify(styled);
+          const last=runs[runs.length-1];
+          if(last && last.end===start && last._key===key)last.end=text.length;
+          else runs.push({...styled,start,end:text.length,_key:key});
+        };
+        const trimTail = () => {
+          const trimmed=text.replace(/ +$/,'');if(trimmed===text)return;
+          text=trimmed;
+          while(runs.length && runs[runs.length-1].start>=text.length)runs.pop();
+          if(runs.length)runs[runs.length-1].end=Math.min(text.length,runs[runs.length-1].end);
+        };
+        const walk=(element,level=0)=>{
+          if(level>32)return;
+          for(const node of element.childNodes){
+            if(node.nodeType===3){
+              const raw=node.textContent||'';
+              if(!raw.trim()){
+                // Preserve a meaningful whitespace separator between adjacent inline spans.
+                if(text && !/\s$/.test(text) && /\s/.test(raw))append(' ',styleAt(element));
+                continue;
+              }
+              let chunk=raw.replace(/\s+/g,' ');
+              if(!text || text.endsWith('\n'))chunk=chunk.replace(/^ +/,'');
+              if(chunk){append(chunk,styleAt(element));textNodes.push(node);}
+            }else if(node.nodeType===1){
+              const child=node;
+              if(child.tagName==='BR'){
+                trimTail();append('\n',styleAt(element));
+              }else if(inlineTags.has(child.tagName) || ['inline','contents','inline-block'].includes(getComputedStyle(child).display)){
+                const cs=getComputedStyle(child);
+                if(cs.display==='none'||cs.visibility==='hidden')continue;
+                consumedInline.add(child);
+                walk(child,level+1);
+              }
+            }
+          }
+        };
+        walk(element);trimTail();
+        if(!text.trim())return null;
+        const styledRuns=runs.filter(r=>r.start<r.end).map(r=>{const {_key,...clean}=r;return clean;});
+        const rects=[];
+        for(const node of textNodes){
+          const range=document.createRange();range.selectNodeContents(node);
+          for(const rect of range.getClientRects())if(rect.width>0&&rect.height>0)rects.push({left:rect.left+window.scrollX,top:rect.top+window.scrollY,bottom:rect.bottom+window.scrollY});
+        }
+        const domRect=element.getBoundingClientRect();
+        const style=getComputedStyle(element);
+        const padLeft=parseFloat(style.paddingLeft)||0;
+        const padRight=parseFloat(style.paddingRight)||0;
+        const x=domRect.left+window.scrollX+padLeft;
+        const y=rects.length?Math.min(...rects.map(r=>r.top)):domRect.top+window.scrollY+(parseFloat(style.paddingTop)||0);
+        const bottom=rects.length?Math.max(...rects.map(r=>r.bottom)):domRect.bottom+window.scrollY;
+        const textWidth=Math.max(1,domRect.width-padLeft-padRight);
+        return {text,runs:styledRuns,x:Math.max(0,x),y:Math.max(0,y),
+          width:Math.max(1,Math.min(textWidth,width-Math.max(0,x))),
+          height:Math.max(1,Math.min(height,bottom)-Math.max(0,y))};
+      }
+      const visit = (element, parentId, forceFrame = false) => {
+        if (['SCRIPT','STYLE','META','LINK','TEMPLATE'].includes(element.tagName)) return;
+        const style = getComputedStyle(element);
+        if (style.display === 'none' || style.visibility === 'hidden') return;
+        const box = measure(element, width, height);
+        if (element.tagName === 'IMG' && (box.width <= 0 || box.height <= 0)) {
+          // Missing or zero-size img still needs a visible fallback slot.
+          const rect = element.getBoundingClientRect();
+          box.x = Math.max(0, Number.isFinite(rect.left) ? rect.left+window.scrollX : 0);
+          box.y = Math.max(0, Number.isFinite(rect.top) ? rect.top+window.scrollY : 0);
+          box.width = Math.max(1,Math.min(width-box.x,Number(element.getAttribute('width'))||160));
+          box.height = Math.max(1,Number(element.getAttribute('height'))||96);
+        }
+        if (box.width <= 0 || box.height <= 0) return;
+        const tag = element.tagName.toLowerCase();
+        const name = element.getAttribute('aria-label') || element.id ||
+          (typeof element.className === 'string' ? element.className.trim().split(/\s+/)[0] : '') || tag;
+        // Semantic containers become nested editable Figma Frames.
+        let currentParent = parentId;
+        const isFrame = SEMANTIC.has(element.tagName) || forceFrame;
+        const bg = includeBackground ? backgroundPaint(style) : null;
+        if (isFrame) {
+          const id = 'semantic-' + (++nextFrameId);
+          currentParent = id;
+          if (Object.prototype.hasOwnProperty.call(counts,tag)) counts[tag]++;
+          layers.push({type:'FRAME', id, parentId, tag,
+            name: tag + (element.id ? ' #' + element.id : (name !== tag ? ' · ' + name : '')),
+            ...box, paddingTop:parseFloat(style.paddingTop)||0, paddingBottom:parseFloat(style.paddingBottom)||0,
+            radius:parseFloat(style.borderTopLeftRadius)||0,...(bg||{})});
+        } else if (bg) {
+          layers.push({type:'RECTANGLE', name:name+' background', parentId:currentParent,
+            ...box,...bg,radius:parseFloat(style.borderTopLeftRadius)||0});
+        }
+        if (element.tagName === 'IMG') {
+          const src = element.currentSrc || element.getAttribute('src') || '';
+          layers.push({type:'IMAGE',name,parentId:currentParent,...box,src});
+        }
+        // The full inline flow is one Figma TextNode with character-range styles.
+        // Descendant spans are marked consumed to avoid a duplicate text layer.
+        if (!consumedInline.has(element) && inlineTextCandidate(element)) {
+          const rich = collectInlineText(element);
+          if (rich && rich.width>0 && rich.height>0) {
+            const base = rich.runs[0];
+            layers.push({type:'TEXT',name,parentId:currentParent,...rich,
+              fontSize:base.fontSize,fontFamily:base.fontFamily,fontWeight:base.fontWeight,
+              color:base.color,textAlign:style.textAlign==='center'?'CENTER':style.textAlign==='right'?'RIGHT':'LEFT'});
+          }
+        }
+        visitChildren(element,currentParent);
+      };
+      visitChildren(document.body,null);
+      // Bottom-up frame sizing. Only direct child layers are counted; a nested
+      // frame contributes ONCE, so its descendants don't inflate the parent.
+      // Vertical siblings in the same row are merged, not naively summed.
+      // This equals a sum of stacked layer heights plus their genuine spacing.
+      const childMap = new Map();
+      for (const layer of layers) {
+        if (!layer.parentId) continue;
+        if (!childMap.has(layer.parentId)) childMap.set(layer.parentId, []);
+        childMap.get(layer.parentId).push(layer);
+      }
+      for (const frame of layers.filter(item=>item.type==='FRAME').reverse()) {
+        const children = (childMap.get(frame.id)||[]).filter(item=>
+          item.type !== 'RECTANGLE' || !/ background$/.test(item.name));
+        const intervals = children.map(item=>[item.y,item.y+item.height])
+          .filter(pair=>Number.isFinite(pair[0]) && Number.isFinite(pair[1]) && pair[1]>pair[0])
+          .sort((a,b)=>a[0]-b[0]);
+        // Merge overlapping occupied rows; this prevents a 3-column grid from
+        // becoming 3x taller merely because it contains 3 cards per row.
+        const rows=[];
+        for (const interval of intervals) {
+          const previous=rows[rows.length-1];
+          if (previous && interval[0]<=previous[1]+1) previous[1]=Math.max(previous[1],interval[1]);
+          else rows.push([...interval]);
+        }
+        const topPad=Math.max(0,Number(frame.paddingTop)||0);
+        const bottomPad=Math.max(0,Number(frame.paddingBottom)||0);
+        if (rows.length) {
+          const first = rows[0][0];
+          const last = rows[rows.length - 1][1];
+          // Calculate the union of actual content rows: side-by-side cards
+          // share one row, while vertical gaps and CSS padding are preserved.
+          const initialOffset = Math.max(topPad, Math.max(0, first - frame.y));
+          frame.height = Math.max(1, Math.ceil(initialOffset + (last - first) + bottomPad));
+        } else {
+          // A hero section can intentionally consist of a CSS background only.
+          frame.height = (frame.fill || frame.gradient || frame.imageSrc)
+            ? Math.max(1, Math.ceil(frame.height))
+            : Math.max(1, Math.ceil(topPad + bottomPad));
+        }
+        // Background rectangles inside frame must match computed frame height.
+        for (const layer of (childMap.get(frame.id)||[])) {
+          if (layer.type==='RECTANGLE' && / background$/.test(layer.name) &&
+              Math.abs(layer.y-frame.y)<2) layer.height=frame.height;
+        }
+      }
+      // Import one finite slice and continue from the exact end on next click.
+      const start = Math.max(0, Math.min(totalHeight, Math.floor(fromY)));
+      // Prefer a semantic section boundary to avoid splitting a section halfway.
+      const hardEnd = Math.min(totalHeight, start + Math.max(500, Math.min(6000, maxChunkHeight)));
+      const boundaries = layers.filter(item => item.type === 'FRAME' &&
+        ['section','header','footer','article'].includes(item.tag))
+        .map(item => Math.ceil(item.y + item.height))
+        .filter(v => v > start + 1000 && v <= hardEnd);
+      const end = hardEnd >= totalHeight ? totalHeight : (boundaries.length ? Math.max(...boundaries) : hardEnd);
+      const filtered = [];
+      for (const item of layers) {
+        const top = Math.max(start, item.y), bottom = Math.min(end, item.y + item.height);
+        if (bottom <= top) continue;
+        filtered.push({...item, y: top - start, height: bottom - top});
+      }
+      const frameCount = 1 + filtered.filter(layer=>layer.type==='FRAME').length;
+      const layerCount = filtered.filter(layer=>layer.type!=='FRAME').length;
+      return {width,height:Math.max(1,end-start),layers:filtered,
+        frameName:'HTML Import · '+start+'–'+end+'px',frameCount,layerCount,counts,
+        chunkStart:start,chunkEnd:end,totalHeight,hasMore:end < totalHeight};
+    };
+    const reportStructure = () => {
+      const result=collect(document.documentElement.clientWidth || window.innerWidth,true,0,6000);
+      parent.postMessage({type:'STRUCTURE_SUMMARY', frameCount:result.frameCount, layerCount:result.layerCount, counts:result.counts, renderId:window.__htfRenderId},'*');
+    };
+    window.addEventListener('message', event => {
+      if (event.source !== parent || !event.data) return;
+      if (event.data.type === 'RENDER_PROBE') {
+        parent.postMessage({type:'RENDER_STATUS',renderId:window.__htfRenderId,
+          pending:window.__htfPendingFetch||0,documentState:document.readyState},'*');
+        scheduleHeight();
+        return;
+      }
+      if (event.data.type === 'SCROLL_TO') {
+        window.scrollTo(0, Math.max(0, Number(event.data.y)||0));
+        return;
+      }
+      if (event.data.type !== 'COLLECT_DOM') return;
+      try {
+        const {requestId, width, includeBackground, fromY, chunkLimit} = event.data;
+        const payload = collect(width, includeBackground, fromY || 0, chunkLimit || 6000);
+        reportStructure();
+        parent.postMessage({type: 'DOM_RESULT', requestId, payload, renderId:window.__htfRenderId}, '*');
+      } catch (error) {
+        parent.postMessage({type: 'DOM_ERROR', requestId, error: String(error), renderId:window.__htfRenderId}, '*');
+      }
+    });
+    // Observe dynamic text/images and JavaScript-inserted sections. Re-measure
+    // immediately before importing, so delayed content is captured too.
+    let lastDomMutation = Date.now();
+    new MutationObserver(() => { lastDomMutation = Date.now(); scheduleHeight(); }).observe(document.body,
+      {childList:true, subtree:true, characterData:true, attributes:true});
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(scheduleHeight);
+      ro.observe(document.body);
+      ro.observe(document.documentElement);
+    }
+    document.addEventListener('load', scheduleHeight, true);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleHeight).catch(() => {});
+    window.addEventListener('resize', scheduleHeight);
+    reportHeight();
+    reportStructure();
+    // Dynamic JSON tables often render only after DOMContentLoaded + fetch.
+    // Wait for the last HTTP response and DOM mutation before confirming ready.
+    const hydrationStarted = Date.now();
+    let sentReady = false;
+    const confirmHydration = () => {
+      if (sentReady) return;
+      const elapsed = Date.now() - hydrationStarted;
+      const recent = Math.max(lastDomMutation, window.__htfLastFetchChange || 0);
+      const pending = window.__htfPendingFetch || 0;
+      const ready = document.readyState === 'complete';
+      // Never deadlock behind an unreachable script, continuous DOM animation,
+      // or a JSON request that never resolves. After 8 seconds allow inspection
+      // of the best available DOM and explicitly flag its partial status.
+      if ((elapsed < 8000 && (!ready || pending > 0 || Date.now() - recent < 500))) {
+        setTimeout(confirmHydration, 120);
+        return;
+      }
+      reportHeight();
+      reportStructure();
+      sentReady = true;
+      parent.postMessage({type:'PREVIEW_READY',renderId:window.__htfRenderId,
+        pending,delayed:!ready || pending > 0 || Date.now()-recent < 500},'*');
+    };
+    setTimeout(confirmHydration, 120);
+  };
+
+  function size() {
+    return {
+      width: Math.max(100, Math.min(3000, Number(widthInput.value) || 1440)),
+      height: measuredHeight
+    };
+  }
+  // Scripts loaded from Link run inside the sandboxed renderer, never the
+  // plugin's Main thread. The proxy only relays text/JSON HTTP(S) requests.
+  // Opaque-origin srcdoc cannot fetch relative JSON without this relay.
+  function sandboxFetchBridge() {
+    const base = window.__htfBaseUrl || 'https://example.invalid/';
+    const requests = new Map();
+    let counter = 0;
+    window.__htfPendingFetch = 0;
+    window.__htfLastFetchChange = Date.now();
+    const nativeFetch = window.fetch ? window.fetch.bind(window) : null;
+    window.addEventListener('message', event => {
+      if (event.source !== parent || !event.data || event.data.type !== 'HTF_FETCH_RESULT') return;
+      const job = requests.get(event.data.id);
+      if (!job) return;
+      requests.delete(event.data.id);
+      window.__htfPendingFetch = Math.max(0, window.__htfPendingFetch - 1);
+      window.__htfLastFetchChange = Date.now();
+      if (event.data.error) { job.reject(new TypeError(event.data.error)); return; }
+      job.resolve(new Response(event.data.body, {
+        status: event.data.status || 200,
+        headers: { 'Content-Type': event.data.contentType || 'application/json' }
+      }));
+    });
+    window.fetch = function(resource, options) {
+      const raw = typeof resource === 'string' ? resource : (resource && resource.url);
+      let resolved;
+      try { resolved = new URL(raw, base).href; }
+      catch (error) { return Promise.reject(error); }
+      if (!/^https?:\/\//i.test(resolved)) {
+        return nativeFetch ? nativeFetch(resource, options) : Promise.reject(new TypeError('Unsupported fetch URL'));
+      }
+      const method = String(options?.method || resource?.method || 'GET').toUpperCase();
+      if (method !== 'GET') return Promise.reject(new TypeError('Link JSON relay supports GET only: ' + method));
+      const id = 'data-' + (++counter);
+      window.__htfPendingFetch++;
+      window.__htfLastFetchChange = Date.now();
+      return new Promise((resolve, reject) => {
+        requests.set(id, {resolve,reject});
+        parent.postMessage({type:'HTF_FETCH',id,url:resolved,renderId:window.__htfRenderId}, '*');
+      });
+    };
+    // Thin XHR compatibility for older jQuery/ajax JSON tables.
+    class RelayXHR extends EventTarget {
+      constructor() { super(); this.readyState=0; this.status=0; this.responseText=''; this.response=null; this.responseType=''; this.timeout=0; this.withCredentials=false; this.upload=new EventTarget(); this._headers={}; }
+      open(method,url,async=true) { this._method=method; this._url=url; this._async=async; this.readyState=1; this._fire('readystatechange'); }
+      setRequestHeader(key,value) { this._headers[key]=value; }
+      overrideMimeType() {}
+      getResponseHeader(name) { return name.toLowerCase()==='content-type' ? (this._contentType||'application/json') : null; }
+      getAllResponseHeaders() { return 'content-type: ' + (this._contentType||'application/json') + '\r\n'; }
+      abort() { this.readyState=0; this._fire('abort'); }
+      _fire(name) { const handler=this['on'+name]; const event=new Event(name); if (typeof handler==='function') handler.call(this,event); this.dispatchEvent(event); }
+      async send() {
+        if (this._async===false) { this._fire('error'); return; }
+        try {
+          const response=await window.fetch(this._url,{method:this._method});
+          this.status=response.status; this._contentType=response.headers.get('content-type')||'application/json';
+          this.responseText=await response.text();
+          this.response=this.responseType==='json'?JSON.parse(this.responseText):this.responseText;
+          this.readyState=4; this._fire('readystatechange'); this._fire('load'); this._fire('loadend');
+        } catch(error) { this.status=0; this.readyState=4; this._fire('readystatechange'); this._fire('error'); this._fire('loadend'); }
+      }
+    }
+    window.XMLHttpRequest = RelayXHR;
+    window.addEventListener('error', event => parent.postMessage({type:'HTF_RUNTIME_ERROR',renderId:window.__htfRenderId,message:event.message||'JavaScript load failed'},'*'));
+    window.addEventListener('unhandledrejection', event => parent.postMessage({type:'HTF_RUNTIME_ERROR',renderId:window.__htfRenderId,message:String(event.reason)},'*'));
+  }
+
+  function htmlSafeScript(content) {
+    return String(content).replace(/<\/script/gi, '<\\/script');
+  }
+  function htmlAttr(value) {
+    return String(value).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  }
+  function linkScriptMarkup() {
+    return linkScripts.map(script => {
+      const moduleType = script.module ? ' type="module"' : '';
+      if (script.src) return '<script' + moduleType + ' src="' + htmlAttr(script.src) + '"></'+'script>';
+      return '<script' + moduleType + '>' + htmlSafeScript(script.text) + '</'+'script>';
+    }).join('\\n');
+  }
+
+  function previewDocument() {
+    const {width} = size();
+    // No literal script-closing sequence in the parent inline script source.
+    const endScript = '<' + '/script>';
+    let structuredData = {};
+    if (code.json.trim()) {
+      try { structuredData = JSON.parse(code.json); }
+      catch (error) { $('errorText').textContent = 'JSON 문법 오류: ' + error.message; }
+    }
+    const jsonLiteral = JSON.stringify(structuredData).replace(/</g, '\\u003c');
+    const globals = 'window.pageData=' + jsonLiteral + ';window.jsonData=window.pageData;';
+    const sourceHtml = resolveAssetsInHtml(code.html);
+    // Preserve inert <script type="application/json"> data queried by page JS.
+    // Remote executable scripts were extracted before this stage.
+    const safeHtml = sourceHtml.replace(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi,
+      (whole, attrs) => /type\s*=\s*["'](?:application\/json|application\/ld\+json)["']/i.test(attrs) ? whole : '');
+    const bridgeBootstrap = 'window.__htfRenderId=' + JSON.stringify(renderToken) +
+      ';window.__htfBaseUrl=' + JSON.stringify(sourceUrl || 'https://example.invalid/') +
+      ';(' + sandboxFetchBridge.toString() + ')();';
+    const baseTag = sourceUrl ? '<base href="' + htmlAttr(sourceUrl) + '">' : '';
+    return '<!doctype html><html><head><meta charset="utf-8">' + baseTag + '<style>' +
+      'html,body{margin:0;width:' + width + 'px;height:auto!important;min-height:0!important}img[src=\"\"]:not([width]),img:not([src]):not([width]){min-width:160px}img[src=\"\"]:not([height]),img:not([src]):not([height]){min-height:96px}' +
+      '.bg-gradient-to-r{background-image:linear-gradient(to right,var(--tw-gradient-from,#5eead4),var(--tw-gradient-to,#67e8f9))}' +
+      '.from-teal-300{--tw-gradient-from:#5eead4}.to-cyan-300{--tw-gradient-to:#67e8f9}' +
+      '.bg-clip-text{-webkit-background-clip:text;background-clip:text}.text-transparent{color:transparent;-webkit-text-fill-color:transparent}' + resolveCssAssets(code.css) +
+      '</style><script>' + globals + endScript +
+      '<script>' + bridgeBootstrap + endScript + '</head><body>' + safeHtml +
+      // Start the collector BEFORE third-party scripts: blocking script downloads
+      // must not prevent readiness or cause a frozen render-review button.
+      '<script>(' + collector.toString() + ')();' + endScript +
+      linkScriptMarkup() +
+      '<script>' + (code.js.trim() ? htmlSafeScript(code.js) : '') + endScript +
+      '</body></html>';
+  }
+  function render(options = {}) {
+    // Preserve approval only for the same source after a successful chunk import.
+    reviewConfirmed = !!options.keepApproval && reviewConfirmed;
+    reviewWhenReady = false;
+    renderBooted = false;
+    clearTimeout(renderWarningTimer);
+    clearTimeout(renderFailureTimer);
+    reviewButton.dataset.retry = 'false';
+    runtimeRequestCount = 0;
+    reviewOpen = false;
+    renderViewport.classList.remove('render-check__viewport--visible');
+    reviewButton.setAttribute('aria-expanded','false');
+    reviewButton.textContent = '렌더링 확인';
+    importButton.disabled = true;
+    $('reviewStatus').textContent = reviewConfirmed ? '다음 영역 재렌더링 중 · 곧 이어서 삽입 가능' : '내용 변경됨 · 렌더링을 다시 확인하세요';
+    const {width} = size();
+    if (!options.keepApproval) {
+      measuredHeight = 100;
+      heightInput.value = '100';
+    }
+    const currentRender = ++renderToken;
+    previewReady = false;
+    updateChunkUI();
+    preview.srcdoc = previewDocument();
+    // A failing third-party script must not leave the UI waiting forever.
+    renderWarningTimer = setTimeout(() => {
+      if (renderToken !== currentRender || previewReady) return;
+      preview.contentWindow?.postMessage({type:'RENDER_PROBE',renderId:currentRender},'*');
+      $('reviewStatus').textContent = renderBooted
+        ? '외부 JS / JSON 대기 중 · 현재 HTML 화면을 확인할 수 있습니다'
+        : '렌더러 시작 지연 · 외부 스크립트를 확인하세요';
+      $('statusText').textContent = '렌더링 중 · 8초 이상 지연되고 있습니다';
+    }, 8000);
+    renderFailureTimer = setTimeout(() => {
+      if (renderToken !== currentRender || previewReady) return;
+      $('errorText').textContent = renderBooted
+        ? '렌더러 준비 신호가 없습니다. 외부 스크립트나 JSON 요청을 확인하고 다시 렌더링하세요.'
+        : '렌더링 스크립트를 실행하지 못했습니다. 외부 코드 또는 HTML 스크립트 오류를 확인하세요.';
+      $('reviewStatus').textContent = '렌더링 응답 없음 · 다시 렌더링할 수 있습니다';
+      reviewButton.dataset.retry = 'true';
+      reviewButton.textContent = '다시 렌더링';
+      $('statusText').textContent = '렌더링 오류';
+    }, 16000);
+    preview.style.width = width + 'px';
+    preview.style.height = '900px'; // fixed measurement viewport, independent of document height
+    updatePreviewScale();
+
+    $('statusText').textContent = '문서 분석 중...';
+  }
+  const sourceTabs = Array.from(document.querySelectorAll('[data-tab]'));
+  bindTabList(sourceTabs, selectedTab => {
+    const tab = selectedTab.dataset.tab;
+    code[active] = editor.value;
+    active = tab;
+    editor.value = code[tab];
+    editor.placeholder = placeholders[tab];
+    sourceTabs.forEach(button => updateTab(button, button === selectedTab, 'tabs__item--active'));
+    $('sourcePanel').setAttribute('aria-labelledby', selectedTab.id);
+    $('filename').textContent = tab === 'html' ? 'index.html' : tab === 'css' ? 'style.css' : tab === 'js' ? 'script.js' : 'data.json';
+    editor.setAttribute('aria-label', tab.toUpperCase() + ' 코드 입력');
+    // Tab navigation is not a source change; keep the render and approval intact.
+  });
+  editor.addEventListener('input', () => { code[active] = editor.value; restartPagination(); render(); });
+  [widthInput, includeBg].forEach(input => input.addEventListener('change', () => {restartPagination();render();}));
+  $('resetBtn').addEventListener('click', () => {
+    code.html = ''; code.css = ''; code.js = ''; code.json = '';
+    linkScripts=[]; linkScriptCount=0; runtimeJsonLoaded=0; runtimeFetchErrors=[]; linkScriptErrors=[];
+    importedFiles.html = importedFiles.css = importedFiles.js = importedFiles.json = null;
+      importedFiles.json = null;
+      code.json = '';
+    localAssets.clear();
+    localJsonAssets.clear();
+    pastedImages.length = 0;
+    refreshFileList();
+    editor.value = '';
+    urlInput.value = '';
+    sourceUrl = null;
+    $('countLayers').textContent = '0';
+    $('frameCount').textContent = '0';
+    $('frameBreakdown').textContent = '시맨틱 구조와 반복 UI 패턴을 분석합니다.';
+    $('errorText').textContent = '';
+    restartPagination();
+    render();
+  });
+  async function normalizeImageUrls(payload) {
+    const urls = new Set();
+    for (const item of payload.layers) {
+      for (const value of [item.type === 'IMAGE' ? item.src : '', item.imageSrc || '']) {
+        if (/^https?:\/\//i.test(value || '')) urls.add(value);
+      }
+    }
+    // Network access may be CORS-restricted. Figma's createImageAsync(URL)
+    // remains the fallback for PNG/JPEG/GIF URLs when fetch cannot read bytes.
+    const mapping = new Map();
+    const candidates = [...urls].slice(0,60);
+    let cursor = 0;
+    await Promise.all(Array.from({length:Math.min(4,candidates.length)},async()=>{
+      while (cursor<candidates.length) {
+        const src=candidates[cursor++];
+        try {
+          const response=await Promise.race([
+            fetch(src,{mode:'cors',credentials:'omit'}),
+            new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),4500))
+          ]);
+          if (!response.ok) continue;
+          const blob=await response.blob();
+          if (!blob.type.startsWith('image/') || blob.size>8*1024*1024) continue;
+          const png=await readAsset(new File([blob],'download.png',{type:blob.type}));
+          mapping.set(src,png);
+        } catch { /* Figma API fallback will try URL directly. */ }
+      }
+    }));
+    let clipboardIndex=0;
+    for (const item of payload.layers) {
+      if (item.type==='IMAGE') {
+        // Clipboard images are a user-provided backup, not an OS paste command.
+        if (pastedImages[clipboardIndex]) item.fallbackSrc=pastedImages[clipboardIndex];
+        clipboardIndex++;
+        if (mapping.has(item.src)) item.src=mapping.get(item.src);
+      }
+      if (item.imageSrc && mapping.has(item.imageSrc)) item.imageSrc=mapping.get(item.imageSrc);
+    }
+  }
+  $('importBtn').addEventListener('click', () => {
+    try {
+      if (activeRequest) throw new Error('이미 변환 작업이 진행 중입니다.');
+      if (!previewReady) throw new Error('HTML 렌더링 완료 후 삽입하세요.');
+      if (!reviewConfirmed) throw new Error('렌더링 확인 버튼으로 실행된 HTML을 먼저 확인하세요.');
+      if (code.json.trim()) {try {JSON.parse(code.json);} catch(e) {throw new Error('JSON 문법 오류: ' + e.message);}}
+      if (importedThrough >= measuredHeight) throw new Error('모든 HTML 영역의 삽입이 완료되었습니다.');
+      const {width} = size();
+      const requestId = String(Date.now()) + '-' + Math.random().toString(36).slice(2);
+      activeRequest = requestId;
+      $('statusText').textContent = '레이어 분석 중...';
+      $('errorText').textContent = '';
+      preview.contentWindow.postMessage({type: 'COLLECT_DOM', requestId, width, includeBackground: includeBg.checked, fromY: importedThrough, chunkLimit: CHUNK_LIMIT}, '*');
+      setTimeout(() => {
+        if (activeRequest === requestId) {
+          activeRequest = null;
+          pendingChunk = null;
+          updateChunkUI();
+          $('errorText').textContent = '변환 시간 초과. HTML/JS 실행 상태를 확인하세요.';
+        }
+      }, 20000);
+    } catch (error) {
+      $('errorText').textContent = String(error.message || error);
+    }
+  });
+  window.addEventListener('message', async event => {
+    if (event.source === preview.contentWindow) {
+      // WindowProxy survives srcdoc navigations, so old events must be rejected.
+      if (event.data && event.data.renderId !== undefined && event.data.renderId !== renderToken) return;
+      if (event.data && event.data.type === 'RENDER_STARTED') {
+        renderBooted = true;
+        return;
+      }
+      if (event.data && event.data.type === 'RENDER_STATUS') {
+        if (!previewReady) $('reviewStatus').textContent = '렌더링 진행 중 · 대기 요청 '+(event.data.pending||0)+'건';
+        return;
+      }
+      if (event.data && event.data.type === 'HTF_FETCH') {
+        const msg = event.data;
+        const target = event.source;
+        let resolved;
+        try { resolved = new URL(msg.url, sourceUrl || 'https://example.invalid/'); }
+        catch { target.postMessage({type:'HTF_FETCH_RESULT',id:msg.id,error:'Invalid JSON request URL'},'*'); return; }
+        const host = resolved.hostname.replace(/^\[|\]$/g,'').toLowerCase();
+        const parts = host.split('.').map(Number);
+        const privateIPv4 = parts.length===4 && parts.every(Number.isInteger) &&
+          (parts[0]===10 || parts[0]===127 || parts[0]===0 ||
+            (parts[0]===172 && parts[1]>=16 && parts[1]<=31) ||
+            (parts[0]===192 && parts[1]===168) || (parts[0]===169 && parts[1]===254));
+        if (!/^https?:$/.test(resolved.protocol) || host==='localhost' ||
+            host.endsWith('.localhost') || host.includes(':') || privateIPv4) {
+          target.postMessage({type:'HTF_FETCH_RESULT',id:msg.id,error:'Non-public URL blocked'},'*'); return;
+        }
+        if (++runtimeRequestCount > 100) {
+          target.postMessage({type:'HTF_FETCH_RESULT',id:msg.id,error:'JSON fetch limit (100 requests per render)'},'*');
+          return;
+        }
+        try {
+          const filename = decodeURIComponent(resolved.pathname.split('/').pop() || '').toLowerCase();
+          const localJson = localJsonAssets.get(filename);
+          if (localJson !== undefined) {
+            JSON.parse(localJson); // fail visibly on malformed uploaded JSON
+            runtimeJsonLoaded++;
+            target.postMessage({type:'HTF_FETCH_RESULT',id:msg.id,status:200,body:localJson,contentType:'application/json'},'*');
+            $('statusText').textContent = '렌더링 · 업로드된 JSON '+runtimeJsonLoaded+'개 사용';
+            return;
+          }
+          const controller = new AbortController();
+          const timer = setTimeout(()=>controller.abort(),10000);
+          let response;
+          try { response = await fetch(resolved.href,{mode:'cors',credentials:'omit',signal:controller.signal}); }
+          finally { clearTimeout(timer); }
+          const contentType = response.headers.get('content-type') || '';
+          const data = await response.text();
+          if (data.length > 2 * 1024 * 1024) throw new Error('JSON resource exceeds 2MB');
+          if (/json/i.test(contentType) || /\.json(?:$|\?)/i.test(resolved.pathname)) runtimeJsonLoaded++;
+          if (!response.ok) throw new Error('HTTP ' + response.status + ' · ' + resolved.pathname);
+          target.postMessage({type:'HTF_FETCH_RESULT',id:msg.id,status:response.status,body:data,contentType},'*');
+          $('statusText').textContent = '렌더링 · JSON '+runtimeJsonLoaded+'개 로딩';
+        } catch (error) {
+          const reason = resolved.pathname+': '+String(error.message||error);
+          runtimeFetchErrors.push(reason);
+          target.postMessage({type:'HTF_FETCH_RESULT',id:msg.id,error:reason},'*');
+          $('errorText').textContent = 'JSON 로딩 실패 · '+reason+' · CORS 설정을 확인하세요.';
+        }
+        return;
+      }
+      if (event.data && event.data.type === 'HTF_RUNTIME_ERROR') {
+        linkScriptErrors.push(String(event.data.message));
+        $('errorText').textContent = '웹페이지 JavaScript 실행 오류 · '+String(event.data.message);
+        return;
+      }
+      if (event.data && event.data.type === 'STRUCTURE_SUMMARY') {
+        $('frameCount').textContent = String(event.data.frameCount);
+        $('countLayers').textContent = String(event.data.layerCount);
+        const counts = event.data.counts || {};
+        $('frameBreakdown').textContent = '루트 1 · ' + ['header','main','section','footer','nav','article','aside'].filter(tag=>counts[tag]).map(tag=>tag+' '+counts[tag]).join(' · ') + (counts.repeatedGroups ? ' · 반복 그룹 '+counts.repeatedGroups+' / 항목 '+counts.repeatedItems : '');
+      } else if (event.data && event.data.type === 'CONTENT_HEIGHT') {
+        const value = Math.max(1, Math.ceil(Number(event.data.height) || 1));
+        measuredHeight = value;
+        heightInput.value = String(value);
+        // Keep the iframe viewport height FIXED: resizing it to content height
+        // feeds percentage heights back into ResizeObserver indefinitely.
+        updateChunkUI();
+        updatePreviewScale();
+        const width = size().width;
+
+
+      } else if (event.data && event.data.type === 'PREVIEW_READY') {
+        previewReady = true;
+        clearTimeout(renderWarningTimer);
+        clearTimeout(renderFailureTimer);
+        reviewButton.dataset.retry = 'false';
+        if (reviewWhenReady && reviewOpen) {
+          reviewWhenReady = false;
+          reviewConfirmed = true;
+        }
+        if (sourceUrl) {
+          const errors = runtimeFetchErrors.length + linkScriptErrors.length;
+          $('statusText').textContent = `URL 렌더링 완료 · JS ${linkScriptCount} · JSON ${runtimeJsonLoaded}` + (errors ? ` · 실패 ${errors}` : '');
+        }
+        if (event.data.delayed) {
+          $('errorText').textContent = '일부 외부 JS / JSON 요청이 지연됐습니다. 화면의 표·페이지네이션을 확인한 뒤 삽입하세요.';
+        }
+        updateChunkUI();
+        if (reviewConfirmed) {
+          $('reviewStatus').textContent = importedThrough >= measuredHeight
+            ? '전체 영역 삽입 완료' : '렌더링 확인 완료 · Figma 삽입 가능';
+          $('statusText').textContent = importedThrough >= measuredHeight
+            ? '전체 문서 삽입 완료' : '렌더링 확인 완료 · Figma에 삽입할 수 있습니다.';
+          preview.contentWindow?.postMessage({type:'SCROLL_TO', y:importedThrough}, '*');
+        } else if (code.html || code.css || code.js) {
+          $('reviewStatus').textContent = '렌더링 완료 · HTML 뷰를 확인하세요';
+          $('statusText').textContent = sourceUrl
+            ? `URL 렌더링 완료 · JS ${linkScriptCount}개 · JSON ${runtimeJsonLoaded}개`
+            : '렌더링 완료 · HTML 뷰를 확인하세요';
+        } else {
+          $('statusText').textContent = '렌더링 완료 · HTML을 입력하거나 링크를 불러오세요';
+        }
+      } else if (event.data && event.data.requestId === activeRequest) {
+        const requestId = activeRequest;
+        activeRequest = null;
+        if (event.data.type === 'DOM_RESULT' && requestId) {
+          const payload = event.data.payload;
+          $('countLayers').textContent = String(payload.layerCount);
+          $('frameCount').textContent = String(payload.frameCount);
+          measuredHeight = payload.totalHeight;
+          heightInput.value = String(payload.totalHeight);
+          pendingChunk = {start:payload.chunkStart,end:payload.chunkEnd,total:payload.totalHeight};
+          updateChunkUI();
+
+          $('statusText').textContent = '이미지 URL 확인 및 변환 중...';
+          try {
+            await normalizeImageUrls(payload);
+            $('statusText').textContent = 'Figma에 삽입 중...';
+            parent.postMessage({pluginMessage: {type:'IMPORT_DOM',payload}}, '*');
+          } catch(error) {
+            pendingChunk=null;
+            updateChunkUI();
+            $('errorText').textContent='이미지 변환 오류: '+String(error);
+          }
+        } else if (event.data.type === 'DOM_ERROR') {
+          pendingChunk = null;
+          updateChunkUI();
+          $('errorText').textContent = String(event.data.error);
+        }
+      }
+    }
+    if (event.data && event.data.pluginMessage) {
+      const message = event.data.pluginMessage;
+      if (message.type === 'ERROR') {
+        pendingChunk = null;
+        updateChunkUI();
+        $('errorText').textContent = String(message.message || '가져오기 오류');
+        $('statusText').textContent = '오류';
+      }
+      if (message.type === 'SUCCESS') {
+        const importedRange = pendingChunk;
+        if (importedRange) importedThrough = importedRange.end;
+        pendingChunk = null;
+        $('errorText').textContent = '';
+        const finished = importedThrough >= (importedRange?.total || measuredHeight);
+        if (finished) {
+          updateChunkUI();
+          $('reviewStatus').textContent = '전체 영역 삽입 완료';
+          $('statusText').textContent = '전체 영역 삽입 완료 · 프레임 '+message.frameCount+'개 / 레이어 '+message.count+'개'
+            +(message.failedImages ? ' · 이미지 대체 '+message.failedImages+'개' : '')
+            +(message.failedBackgrounds ? ' · 배경 이미지 실패 '+message.failedBackgrounds+'개' : '');
+        } else {
+          render({keepApproval:true});
+          $('statusText').textContent='삽입 완료 · 프레임 '+message.frameCount+'개 / 레이어 '+message.count+'개'
+            +(message.failedImages ? ' · 이미지 대체 '+message.failedImages+'개' : '')
+            +(message.failedBackgrounds ? ' · 배경 이미지 실패 '+message.failedBackgrounds+'개' : '')
+            +(message.fallbackCount ? ' · 폰트 대체 '+message.fallbackCount+'개' : '')+' · 다음 영역 렌더링 중';
+          updateChunkUI();
+        }
+      }
+    }
+  });
+  const modeTabs = Array.from(document.querySelectorAll('.mode-tabs__item'));
+  bindTabList(modeTabs, selectedTab => {
+    modeTabs.forEach(tab => {
+      const selected = tab === selectedTab;
+      updateTab(tab, selected, 'mode-tabs__item--active');
+      $(tab.getAttribute('aria-controls')).hidden = !selected;
+    });
+  });
+  // A non-empty JS editor is executed automatically in the isolated preview iframe.
+  code.html='';code.css='';code.js='';code.json='';
+  editor.value = '';
+  editor.placeholder = placeholders.html;
+  refreshFileList();
+  restartPagination();
+  render();
+})();
+
+</script>
+</body></html>
